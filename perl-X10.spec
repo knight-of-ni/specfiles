@@ -51,6 +51,9 @@ find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 %{perl_vendorlib}/X10/
 
 %changelog
+* Tue Jan 03 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.03-4
+- bugzilla 1409869 feedback
+
 * Mon Jan 02 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.03-3
 - Add perl-generators buildrequires
 - Move make test to %check
