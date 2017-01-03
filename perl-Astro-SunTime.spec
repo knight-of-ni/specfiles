@@ -3,7 +3,7 @@
 Name:      perl-Astro-SunTime
 Summary:   Astro::SunTime perl module
 Version:   0.01
-Release:   3%{?dist}
+Release:   4%{?dist}
 License:   GPL+ or Artistic
 Group:     Applications/CPAN
 URL:       http://search.cpan.org/dist/Astro-SunTime/
@@ -26,19 +26,23 @@ Astro::SunTime perl module provides a function interface to calculate sun rise/s
 %{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 NO_PERLLOCAL=1
 %make_build
 
-%check
-%make_build test
-
 %install
 %make_build pure_install DESTDIR=%{buildroot}
 # older Perls don't support the NO_PACKLIST flag
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 
+%check
+%make_build test
+
 %files
 %doc Changes MANIFEST README test.pl
+%dir %{perl_vendorlib}/Astro
 %{perl_vendorlib}/Astro/SunTime.pm
 
 %changelog
+* Tue Jan 03 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.03-4
+- bugzilla 1409869 feedback applies to this package too
+
 * Mon Jan 02 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.01-3
 - Add perl-generators buildrequires 
 - move make test to %check
