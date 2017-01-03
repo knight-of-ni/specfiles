@@ -1,7 +1,7 @@
 Name:      perl-X10
 Summary:   X10 perl module
 Version:   0.03
-Release:   3%{?dist}
+Release:   4%{?dist}
 License:   GPL+ or Artistic
 Group:     Applications/CPAN
 URL:       http://search.cpan.org/dist/X10/
@@ -32,13 +32,13 @@ X10 perl module for the Firecracker, ActiveHome, and TwoWay/TW523 interfaces.
 %{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 NO_PERLLOCAL=1 PMLIBDIRS=
 %make_build
 
-%check
-%make_build test
-
 %install
 %make_build pure_install DESTDIR=%{buildroot}
 # older Perls don't support the NO_PACKLIST flag
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
+
+%check
+%make_build test
 
 %files
 %doc Changes MANIFEST README TODO test.pl
@@ -48,11 +48,11 @@ find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 %{_bindir}/x10server
 
 %{perl_vendorlib}/X10.pm
-%{perl_vendorlib}/X10/*
+%{perl_vendorlib}/X10/
 
 %changelog
 * Mon Jan 02 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.03-3
-- Add perl-generatros buildrequires
+- Add perl-generators buildrequires
 - Move make test to %check
 
 * Sun Jan 01 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.03-2
