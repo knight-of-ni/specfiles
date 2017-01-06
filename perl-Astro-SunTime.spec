@@ -1,23 +1,28 @@
-%global debug_package %{nil}
-
 Name:      perl-Astro-SunTime
-Summary:   Astro::SunTime perl module
+Summary:   Calculates sun rise/set times 
 Version:   0.01
 Release:   4%{?dist}
-License:   GPL+ or Artistic
-Group:     Applications/CPAN
+License:   GPLv3
+Group:     Development/Libraries
 URL:       http://search.cpan.org/dist/Astro-SunTime/
 Source:    http://www.cpan.org/CPAN/authors/id/R/RO/ROBF/Astro-SunTime-%{version}.tar.gz
 BuildArch: noarch
 
 BuildRequires: perl(ExtUtils::MakeMaker)
-BuildRequires: perl(Time::ParseDate)
+BuildRequires: perl
 BuildRequires: perl-generators
+
+# Needed during build for the perl test
+BuildRequires: perl(POSIX)
+BuildRequires: perl(strict)
+BuildRequires: perl(Time::ParseDate)
+BuildRequires: perl(vars)
 
 Requires:  perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
 %description
-Astro::SunTime perl module provides a function interface to calculate sun rise/set times.
+Astro::SunTime Perl module provides a function interface to calculate sun
+rise/set times.
 
 %prep
 %autosetup -n Astro-SunTime-%{version}
@@ -29,23 +34,26 @@ Astro::SunTime perl module provides a function interface to calculate sun rise/s
 %install
 %make_build pure_install DESTDIR=%{buildroot}
 # older Perls don't support the NO_PACKLIST flag
-find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
+find %{buildroot} -type f -name .packlist -delete
 
 %check
 %make_build test
 
 %files
-%doc Changes MANIFEST README test.pl
+%doc Changes README
 %dir %{perl_vendorlib}/Astro
 %{perl_vendorlib}/Astro/SunTime.pm
 
 %changelog
-* Tue Jan 03 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.03-4
+* Tue Jan 03 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.01-5
+- Additional feedback from bugzilla 1409869
+
+* Tue Jan 03 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.01-4
 - bugzilla 1409869 feedback applies to this package too
 
 * Mon Jan 02 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.01-3
 - Add perl-generators buildrequires 
-- move make test to %check
+- move make test to %%check
 
 * Sun Jan 01 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.01-2
 - Update spec file to modern Fedora packaging guidelines 
