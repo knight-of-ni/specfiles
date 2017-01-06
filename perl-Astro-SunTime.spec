@@ -1,7 +1,7 @@
 Name:      perl-Astro-SunTime
 Summary:   Calculates sun rise/set times 
 Version:   0.01
-Release:   4%{?dist}
+Release:   5%{?dist}
 License:   GPLv3
 Group:     Development/Libraries
 URL:       http://search.cpan.org/dist/Astro-SunTime/
