@@ -11,6 +11,7 @@ BuildArch: noarch
 BuildRequires: perl(ExtUtils::MakeMaker)
 BuildRequires: perl
 BuildRequires: perl-generators
+BuildRequires: findutils
 
 # Needed during build for the perl test
 BuildRequires: perl(Test)
