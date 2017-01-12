@@ -13,6 +13,7 @@ BuildRequires: perl
 BuildRequires: perl-generators
 
 # Needed during build for the perl test
+BuildRequires: perl(Test)
 BuildRequires: perl(POSIX)
 BuildRequires: perl(strict)
 BuildRequires: perl(Time::ParseDate)
