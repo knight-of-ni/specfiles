@@ -15,7 +15,14 @@ BuildRequires: findutils
 
 # Needed during build for the perl test
 BuildRequires: perl(Astro::SunTime)
+BuildRequires: perl(Carp)
+BuildRequires: perl(Data::Dumper)
+BuildRequires: perl(Device::SerialPort)
+BuildRequires: perl(File::Basename)
+BuildRequires: perl(IO::Select)
+BuildRequires: perl(IO::Socket)
 BuildRequires: perl(POSIX)
+BuildRequires: perl(Storable)
 BuildRequires: perl(strict)
 BuildRequires: perl(Time::ParseDate)
 BuildRequires: perl(vars)
