@@ -55,8 +55,9 @@ find %{buildroot} -type f -name .packlist -delete
 %{_mandir}/man1/x10client.1*
 %{_mandir}/man1/x10server.1*
 
-%{_bindir}/x10client
-%{_bindir}/x10server
+# rpmlint flags non-standard-executable-perm if we don't force 755 perms
+%attr(755,-,-) %{_bindir}/x10client
+%attr(755,-,-) %{_bindir}/x10server
 
 %{perl_vendorlib}/X10.pm
 %{perl_vendorlib}/X10/
