@@ -1,7 +1,7 @@
 Name:      perl-Astro-SunTime
 Summary:   Calculates sun rise/set times 
-Version:   0.01
-Release:   5%{?dist}
+Version:   0.05
+Release:   1%{?dist}
 License:   GPLv3
 Group:     Development/Libraries
 URL:       http://search.cpan.org/dist/Astro-SunTime/
@@ -47,6 +47,10 @@ find %{buildroot} -type f -name .packlist -delete
 %{perl_vendorlib}/Astro/SunTime.pm
 
 %changelog
+* Fri Jan 20 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.05-1
+- Update to release 0.05
+- Added Perl(Test) buildrequries to run new tests in 0.05 release
+
 * Tue Jan 03 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.01-5
 - Additional feedback from bugzilla 1409869
 
