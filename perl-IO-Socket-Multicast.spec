@@ -29,6 +29,7 @@ transmissions and generate your own outgoing multicast packets.
 
 %prep
 %autosetup -n IO-Socket-Multicast-%{version}
+chmod 644 examples/*
 
 %build
 %{__perl} Makefile.PL INSTALLDIRS=vendor OPTIMIZE="%{optflags}" NO_PACKLIST=1 NO_PERLLOCAL=1
