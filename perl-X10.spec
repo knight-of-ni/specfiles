@@ -1,7 +1,7 @@
 Name:      perl-X10
 Summary:   Enables Perl to communicate with X10 devices
-Version:   0.03
-Release:   5%{?dist}
+Version:   0.04
+Release:   1%{?dist}
 License:   GPLv3
 Group:     Development/Libraries
 URL:       http://search.cpan.org/dist/X10/
@@ -15,12 +15,8 @@ BuildRequires: findutils
 
 # Needed during build for the perl test
 BuildRequires: perl(Astro::SunTime)
-BuildRequires: perl(Carp)
 BuildRequires: perl(Data::Dumper)
-BuildRequires: perl(Device::SerialPort)
 BuildRequires: perl(File::Basename)
-BuildRequires: perl(IO::Select)
-BuildRequires: perl(IO::Socket)
 BuildRequires: perl(POSIX)
 BuildRequires: perl(Storable)
 BuildRequires: perl(strict)
@@ -36,8 +32,7 @@ X10 Perl module for the Firecracker, ActiveHome, and TwoWay/TW523 interfaces.
 %autosetup -n X10-%{version}
 
 %build
-# PMLIBDIRS intentionally reset to avoid placing config & doc files into the vendorlib folder
-%{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 NO_PERLLOCAL=1 PMLIBDIRS=
+%{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 NO_PERLLOCAL=1
 %make_build
 
 %install
@@ -50,7 +45,7 @@ find %{buildroot} -type f -name .packlist -delete
 
 %files
 %doc Changes README TODO
-%doc devices macros.config ports scheduler.config
+%doc macros.config scheduler.config
 
 %{_mandir}/man1/x10client.1*
 %{_mandir}/man1/x10server.1*
@@ -63,6 +58,10 @@ find %{buildroot} -type f -name .packlist -delete
 %{perl_vendorlib}/X10/
 
 %changelog
+* Fri Jan 20 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.04-1
+- Update to release 0.04
+- Add man pages for executables
+
 * Thu Jan 12 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.03-5
 - Additional feedback from bugzilla 1409869
 
