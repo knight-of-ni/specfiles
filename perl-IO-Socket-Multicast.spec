@@ -14,9 +14,14 @@ BuildRequires:  perl(Config)
 BuildRequires:  findutils
 
 # Needed during build for the perl test
-BuildRequires:  perl(IO::Interface) >= 0.94
+BuildRequires:  perl(Carp)
+BuildRequires:  perl(DynaLoader)
+BuildRequires:  perl(Exporter)
+BuildRequires:  perl(IO::Socket)
 BuildRequires:  perl(strict)
+BuildRequires:  perl(vars)
 BuildRequires:  perl(Test::More)
+BuildRequires:  perl(IO::Interface) >= 0.94
 
 Requires:       perl(IO::Interface) >= 0.94
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
