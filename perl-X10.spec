@@ -1,7 +1,7 @@
 Name:      perl-X10
 Summary:   Enables Perl to communicate with X10 devices
 Version:   0.04
-Release:   1%{?dist}
+Release:   2%{?dist}
 License:   GPLv3
 Group:     Development/Libraries
 URL:       http://search.cpan.org/dist/X10/
@@ -40,6 +40,8 @@ X10 Perl module for the Firecracker, ActiveHome, and TwoWay/TW523 interfaces.
 # older Perls don't support the NO_PACKLIST flag
 find %{buildroot} -type f -name .packlist -delete
 
+%{_fixperms} %{buildroot}/*
+
 %check
 %make_build test
 
@@ -50,14 +52,16 @@ find %{buildroot} -type f -name .packlist -delete
 %{_mandir}/man1/x10client.1*
 %{_mandir}/man1/x10server.1*
 
-# rpmlint flags non-standard-executable-perm if we don't force 755 perms
-%attr(755,-,-) %{_bindir}/x10client
-%attr(755,-,-) %{_bindir}/x10server
+%{_bindir}/x10client
+%{_bindir}/x10server
 
 %{perl_vendorlib}/X10.pm
 %{perl_vendorlib}/X10/
 
 %changelog
+* Thu Feb 02 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.04-2
+- Use %%{_fix_perms} macro
+
 * Fri Jan 20 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.04-1
 - Update to release 0.04
 - Add man pages for executables
