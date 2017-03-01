@@ -43,7 +43,7 @@ find %{buildroot} -type d -empty -delete
 
 %files
 %license Copying Artistic
-%doc Artistic Changes README
+%doc Changes README
 %{perl_vendorarch}/auto/*
 %{perl_vendorarch}/Sys*
 %{_mandir}/man3/*
