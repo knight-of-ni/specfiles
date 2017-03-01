@@ -42,7 +42,8 @@ find %{buildroot} -type d -empty -delete
 %make_build test
 
 %files
-%doc Artistic Changes Copying README
+%license Copying Artistic
+%doc Artistic Changes README
 %{perl_vendorarch}/auto/*
 %{perl_vendorarch}/Sys*
 %{_mandir}/man3/*
