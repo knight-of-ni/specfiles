@@ -1,12 +1,18 @@
 Name:           perl-Sys-Mmap
-Version:        0.17
-Release:        7%{?dist}
+Version:        0.18
+Release:        1%{?dist}
 Summary:        Use mmap to map in a file as a Perl variable
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/Sys-Mmap/
-Source0:        http://www.cpan.org/authors/id/T/TO/TODDR/Sys-Mmap-%{version}.tar.gz
-BuildRequires:  perl(ExtUtils::MakeMaker) perl(Test::More) perl-generators
+Source0:        http://www.cpan.org/authors/id/S/SW/SWALTERS/Sys-Mmap-%{version}.tar.gz
+
+BuildRequires:  perl
+BuildRequires:  perl-generators
+BuildRequires:  findutils
+BuildRequires:  perl(ExtUtils::MakeMaker) 
+BuildRequires:  perl(Test::More)
+
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 %{?perl_default_filter}
 
@@ -14,26 +20,26 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 The Mmap module lets you use mmap to map in a file as a perl variable rather
 than reading the file into dynamically allocated memory.  Multiple programs may
 map the same file into memory, and immediately see changes by each other.
-Memory may be allocated not attached to a file, and shared with subprocesses.
+Memory may be allocated not attached to a file, and shared with sub-processes.
 
 %prep
-%setup -q -n Sys-Mmap-%{version}
+%autosetup -n Sys-Mmap-%{version}
 
 %build
-%{__perl} Makefile.PL INSTALLDIRS=vendor OPTIMIZE="%{optflags}"
-make %{?_smp_mflags}
+%{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 NO_PERLLOCAL=1 OPTIMIZE="%{optflags}"
+%make_build
 
 %install
-make pure_install PERL_INSTALL_ROOT=%{buildroot}
+%make_build pure_install DESTDIR=%{buildroot}
 
-find %{buildroot} -type f -name .packlist -exec rm -f {} \;
-find %{buildroot} -type f -name '*.bs' -size 0 -exec rm -f {} \;
-find %{buildroot} -depth -type d -exec rmdir {} 2>/dev/null \;
+find %{buildroot} -type f -name .packlist -delete
+find %{buildroot} -type f -name '*.bs' -empty -delete
+find %{buildroot} -type d -empty -delete
 
 %{_fixperms} %{buildroot}/*
 
 %check
-make test
+%make_build test
 
 %files
 %doc Artistic Changes Copying README
@@ -42,8 +48,9 @@ make test
 %{_mandir}/man3/*
 
 %changelog
-* Tue Jan 03 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.17-7
-- Add perl-generators buildrequires 
+* Wed Mar 01 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.18-1
+- Update specfile to modern Fedora packaging guidelines
+- Update to 0.18
 
 * Sun May 15 2016 Jitka Plesnikova <jplesnik@redhat.com> - 0.17-6
 - Perl 5.24 rebuild
