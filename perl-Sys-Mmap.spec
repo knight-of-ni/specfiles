@@ -1,5 +1,5 @@
 Name:           perl-Sys-Mmap
-Version:        0.18
+Version:        0.19
 Release:        1%{?dist}
 Summary:        Use mmap to map in a file as a Perl variable
 License:        GPL+ or Artistic
@@ -49,9 +49,9 @@ find %{buildroot} -type d -empty -delete
 %{_mandir}/man3/*
 
 %changelog
-* Wed Mar 01 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.18-1
+* Thu Mar 02 2017 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.19-1
 - Update specfile to modern Fedora packaging guidelines
-- Update to 0.18
+- Update to 0.19
 
 * Sun May 15 2016 Jitka Plesnikova <jplesnik@redhat.com> - 0.17-6
 - Perl 5.24 rebuild
