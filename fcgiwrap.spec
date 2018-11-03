@@ -54,9 +54,9 @@ autoreconf -i
 %make_install
 
 # Install our own systemd config files
-install -Dm 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/sysconfig/fcgiwrap
-install -Dm 644 %{SOURCE2} %{buildroot}%{_unitdir}/fcgiwrap.service
-install -Dm 644 %{SOURCE3} %{buildroot}%{_unitdir}/fcgiwrap.socket
+install -Dm 644 %{SOURCE1} %{buildroot}%{_unitdir}/fcgiwrap.service
+install -Dm 644 %{SOURCE2} %{buildroot}%{_unitdir}/fcgiwrap.socket
+install -Dm 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/fcgiwrap
 
 %post
 %systemd_post fcgiwrap.service
