@@ -10,9 +10,10 @@ Group:          System Environment/Daemons
 License:        MIT
 URL:            https://github.com/gnosek/fcgiwrap
 Source0:        https://github.com/gnosek/fcgiwrap/archive/%{commit}/%{name}-%{commit}.tar.gz
-Source1:        fcgiwrap.service
-Source2:        fcgiwrap.socket
+Source1:        %{name}@.service
+Source2:        %{name}@.socket
 Source3:        fcgiwrap
+Source4:        SETUP
 
 # https://github.com/gnosek/fcgiwrap/pull/39
 Patch0:         %{name}-1.1.0-use_pkg-config_libsystemd.patch
@@ -44,6 +45,7 @@ following features:
 
 %prep
 %autosetup -n %{name}-%{commit}
+install -pm 0644 %{SOURCE4} .
 
 %build
 autoreconf -i
@@ -53,31 +55,35 @@ autoreconf -i
 %install
 %make_install
 
+# Remove the default systemd files 
+rm -f %{buildroot}%{_unitdir}/fcgiwrap.service
+rm -f %{buildroot}%{_unitdir}/fcgiwrap.socket
+
 # Install our own systemd config files
-install -Dm 644 %{SOURCE1} %{buildroot}%{_unitdir}/fcgiwrap.service
-install -Dm 644 %{SOURCE2} %{buildroot}%{_unitdir}/fcgiwrap.socket
-install -Dm 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/fcgiwrap
+install -Dm 644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}@.service
+install -Dm 644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}@.socket
+install -Dm 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 
 %post
-%systemd_post fcgiwrap.service
-%systemd_post fcgiwrap.socket
+%systemd_post %{name}@.service
+%systemd_post %{name}@.socket
 
 %preun
-%systemd_preun fcgiwrap.service
-%systemd_preun fcgiwrap.socket
+%systemd_preun %{name}@.service
+%systemd_preun %{name}@.socket
 
 %postun
-%systemd_postun_with_restart fcgiwrap.service
-%systemd_postun_with_restart fcgiwrap.socket
+%systemd_postun_with_restart %{name}@.service
+%systemd_postun_with_restart %{name}@.socket
 
 %files
-%doc README.rst
+%doc README.rst SETUP
 %license COPYING
-%{_sbindir}/fcgiwrap
-%{_mandir}/man8/fcgiwrap.8*
-%{_unitdir}/fcgiwrap.service
-%{_unitdir}/fcgiwrap.socket
-%config(noreplace) %{_sysconfdir}/sysconfig/fcgiwrap
+%{_sbindir}/%{name}
+%{_mandir}/man8/%{name}.8*
+%{_unitdir}/%{name}@.service
+%{_unitdir}/%{name}@.socket
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
 * Sat Nov 03 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.1.0-6.20150530git99c942c
