@@ -12,7 +12,7 @@ URL:            https://github.com/gnosek/fcgiwrap
 Source0:        https://github.com/gnosek/fcgiwrap/archive/%{commit}/%{name}-%{commit}.tar.gz
 Source1:        %{name}@.service
 Source2:        %{name}@.socket
-Source3:        fcgiwrap
+Source3:        %{name}
 Source4:        SETUP
 
 # https://github.com/gnosek/fcgiwrap/pull/39
@@ -22,6 +22,7 @@ Patch1:         %{name}-1.1.0-declare_cgi_error_noreturn.patch
 # https://github.com/gnosek/fcgiwrap/pull/44
 Patch2:         %{name}-1.1.0-fix_kill_param_sequence.patch
 
+BuildRequires:  coreutils
 BuildRequires:  gcc
 BuildRequires:  autoconf
 BuildRequires:  automake
