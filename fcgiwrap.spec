@@ -47,7 +47,7 @@ following features:
 
 %build
 autoreconf -i
-%configure --prefix="" --without-systemd # We will supply our own systemd configs
+%configure --prefix="" --with-systemd
 %make_build
 
 %install
