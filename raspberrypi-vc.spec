@@ -33,7 +33,7 @@ Shared libraries for accessing the BCM283x VideoCore GPU on the RaspberryPi.
 
 %package devel
 Summary:    Headers for libraries that access the Raspberry Pi GPU
-Requires:   %{name}-libs = %{version}
+Requires:   %{name}-libs%{?_isa} = %{version}
 License:    GPLv2+ and Freely redistributable, with restrictions; see LICENCE.broadcom and headers
 
 %description devel
@@ -42,7 +42,7 @@ Header files for accessing the BCM283x VideoCore GPU on the Raspberry Pi.
 
 %package demo-source
 Summary:    Demo source for accessing the Raspberry Pi GPU
-Requires:   %{name}-libs = %{version}
+Requires:   %{name}-libs%{?_isa} = %{version}
 License:    ASL 2.0
 BuildArch:  noarch
 
@@ -52,7 +52,7 @@ Demo source code for accessing the BCM283x VideoCore GP on the Raspberry Pi.
 
 %package utils
 Summary:    Utilities related to the Raspberry Pi GPU
-Requires:   %{name}-libs = %{version}
+Requires:   %{name}-libs%{?_isa} = %{version}
 
 %description utils
 Utilities for using the BCM283x VideoCore GPU on the Raspberry Pi.
@@ -60,7 +60,7 @@ Utilities for using the BCM283x VideoCore GPU on the Raspberry Pi.
 
 %package static
 Summary:    Static libraries for accessing the Raspberry Pi GPU
-Requires:   %{name}-libs = %{version}
+Requires:   %{name}-libs%{?_isa} = %{version}
 
 %description static
 Static versions of libraries for accessing the BCM283x VideoCore GPU on the Raspberry Pi.
