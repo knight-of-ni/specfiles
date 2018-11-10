@@ -10,6 +10,9 @@ URL:        http://wiringpi.com
 Source0:    https://git.drogon.net/?p=wiringPi;a=snapshot;h=%{commit_long};sf=tgz#/wiringPi-%{commit_short}.tar.gz
 Patch0:     0001-Makefiles.patch
 ExclusiveArch: armv7hl
+
+BuildRequires:  gcc
+
 Obsoletes:  %{name}-libs
 Conflicts:  %{name}-libs
 
