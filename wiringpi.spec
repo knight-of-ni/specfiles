@@ -13,7 +13,9 @@ ExclusiveArch: armv7hl
 
 BuildRequires:  gcc
 
-Obsoletes:  %{name}-libs
+# wiringpi-libs pacakge exists in some third party repos
+# flag it as conflicting
+Obsoletes:  %{name}-libs <= %{version}
 Conflicts:  %{name}-libs
 
 
@@ -127,7 +129,7 @@ done
 
 
 %changelog
-* Sat Nov 10 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 2.46 - 4
+* Sat Nov 10 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 2.46-4
 - Refactor for RPM Fusion
 - See RFBZ#xxxx
 
