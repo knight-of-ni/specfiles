@@ -34,7 +34,7 @@ Shared libraries for accessing the BCM283x VideoCore GPU on the RaspberryPi.
 %package devel
 Summary:    Headers for libraries that access the Raspberry Pi GPU
 Requires:   %{name}-libs%{?_isa} = %{version}
-License:    GPLv2+ and Freely redistributable, with restrictions; see LICENCE.broadcom and headers
+License:    GPLv2+
 Provides:   compat-%{name}-devel = %{version}-%{release}
 
 %description devel
