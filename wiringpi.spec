@@ -130,7 +130,7 @@ done
 %changelog
 * Sat Nov 10 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 2.46-4
 - Refactor for RPM Fusion
-- See RFBZ xxxx
+- See RFBZ 5079
 
 * Mon Jul 30 2018 Vaughan Agrez <devel@agrez.net> - 2.46-3
 - Add conflicts/obsoletes for old wiringpi-libs package
