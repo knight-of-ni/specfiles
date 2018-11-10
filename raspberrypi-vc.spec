@@ -5,7 +5,7 @@ Name:       raspberrypi-vc
 Version:    20181108
 Release:    1.git%{commit_short}%{?dist}
 Summary:    VideoCore GPU libraries, utilities and demos for Raspberry Pi
-License:    Redistributable, with restrictions; see LICENSE.broadcom
+License:    BSD
 URL:        https://github.com/raspberrypi
 Source0:    %{url}/userland/archive/%{commit_long}.tar.gz#/raspberrypi-userland-%{commit_short}.tar.gz
 Source1:    raspberrypi-vc-libs.conf
@@ -143,7 +143,7 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 %{_libdir}/vc/*.so
 %{_libdir}/vc/plugins/*.so
 /opt/vc/lib
-%{_sysconfdir}/ld.so.conf.d/*.conf
+%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*.conf
 %{_udevrulesdir}/*.rules
 
 
