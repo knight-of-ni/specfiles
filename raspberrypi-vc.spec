@@ -15,6 +15,7 @@ Patch0:     raspberrypi-vc-demo-source-path-fixup.patch
 ExclusiveArch:  armv7hl
 
 BuildRequires:  cmake
+BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  systemd
 
