@@ -64,7 +64,8 @@ Summary:    Static libraries for accessing the Raspberry Pi GPU
 Requires:   %{name}-libs%{?_isa} = %{version}
 
 %description static
-Static versions of libraries for accessing the BCM283x VideoCore GPU on the Raspberry Pi.
+Static versions of libraries for accessing the BCM283x VideoCore GPU on the
+Raspberry Pi.
 
 
 %prep
