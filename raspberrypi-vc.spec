@@ -1,10 +1,9 @@
-%global snapshot_date   20181108
-%global commit_long     de4a7f2e3c391e2d3bc76af31864270e7802d9ac
+%global commit_long     d574b51a60a075baefe863670466ee24e6c4256e
 %global commit_short    %(c=%{commit_long}; echo ${c:0:7})
 
 Name:       raspberrypi-vc
-Version:    0
-Release:    1.%{snapshot_date}git%{commit_short}%{?dist}
+Version:    20181108
+Release:    1.git%{commit_short}%{?dist}
 Summary:    VideoCore GPU libraries, utilities and demos for Raspberry Pi
 License:    Redistributable, with restrictions; see LICENSE.broadcom
 URL:        https://github.com/raspberrypi
@@ -13,7 +12,7 @@ Source1:    raspberrypi-vc-libs.conf
 Source2:    10-vchiq.rules
 # Patch0 fixes up paths for relocation from /opt to system directories.
 Patch0:     raspberrypi-vc-demo-source-path-fixup.patch
-ExclusiveArch:  armv7hnl
+ExclusiveArch:  armv7hl
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
@@ -25,7 +24,8 @@ Libraries, utilities and demos for the Raspberry Pi BCM283x SOC GPUs
 
 %package libs
 Summary:    Libraries for accessing the Raspberry Pi GPU
-Requires:   bcm283x-firmware
+# TO-DO: verify bcm283x-firmware pkg from Fedora is appropriate here
+#Requires:   bcm283x-firmware
 
 %description libs
 Shared libraries for accessing the BCM283x VideoCore GPU on the RaspberryPi.
@@ -35,6 +35,7 @@ Shared libraries for accessing the BCM283x VideoCore GPU on the RaspberryPi.
 Summary:    Headers for libraries that access the Raspberry Pi GPU
 Requires:   %{name}-libs%{?_isa} = %{version}
 License:    GPLv2+ and Freely redistributable, with restrictions; see LICENCE.broadcom and headers
+Provides:   compat-%{name}-devel = %{version}-%{release}
 
 %description devel
 Header files for accessing the BCM283x VideoCore GPU on the Raspberry Pi.
@@ -73,15 +74,18 @@ Static versions of libraries for accessing the BCM283x VideoCore GPU on the Rasp
 %build
 mkdir build
 pushd build
-cmake -DCMAKE_BUILD_TYPE=Release -DVMCS_INSTALL_PREFIX=%{_usr} \
--DCMAKE_C_FLAGS=%{optflags} ..
+%cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DVMCS_INSTALL_PREFIX=%{_prefix} \
+        -DCMAKE_C_FLAGS=%{optflags} \
+        ..
 %make_build
 popd
 
 
 %install
 pushd build
-%make_install DESTDIR=%{buildroot}
+%make_install
 popd
 
 ### libs
@@ -166,8 +170,9 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 
 
 %changelog
-* Thu Nov 08 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-1.de4a7f2
-- Refactor for RPMFusion
+* Sat Nov 10 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-1.gitd574b51
+- Refactor for RPM Fusion
+- See RFBZ#5074
 
 * Wed Oct 10 2018 Vaughan <devel at agrez dot net> - 20181010-1.de4a7f2
 - Sync to latest git revision: de4a7f2e3c391e2d3bc76af31864270e7802d9ac
