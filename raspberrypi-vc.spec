@@ -172,7 +172,7 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 %changelog
 * Sat Nov 10 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-1.gitd574b51
 - Refactor for RPM Fusion
-- See RFBZ#5074
+- See RFBZ 5074
 
 * Wed Oct 10 2018 Vaughan <devel at agrez dot net> - 20181010-1.de4a7f2
 - Sync to latest git revision: de4a7f2e3c391e2d3bc76af31864270e7802d9ac
