@@ -249,7 +249,7 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 - Sync to latest git revision: 17c28b9d1d234893b73adeb95efc4959b617fc85
 - Update raspberrypi-vc-demo-source-path-fixup.patch
 - Re-enable optflag -Wp,-D_FORTIFY_SOURCE=2 (fixed upstream)
-- Clean up old %Provides
+- Clean up old Provides
 
 * Tue Mar 22 2016 Vaughan <devel at agrez dot net> - 20160321-1.2f56a29
 - Sync to latest git revision: 2f56a2943a9eb8420df52ccf91f5a1c5a70e8713
