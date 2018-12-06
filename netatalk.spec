@@ -125,7 +125,7 @@ export CFLAGS="$CFLAGS -fsigned-char"
     --with-init-style=redhat-systemd            \
     --without-tdb                               \
     --with-bdb                                  \
-    --with-lockfile=%{rundir}/lock/netatalk/netatalk \
+    --with-lockfile=%{_rundir}/lock/netatalk/netatalk \
     --disable-silent-rules                      \
     --disable-static                            \
     %{?with_acls:--with-acl}                    \
