@@ -14,7 +14,6 @@
 %global with_mysql        1
 %global with_procpsng     1
 %global with_quota        1
-%global with_systemd      1
 %global without_openafs   1
 
 # tcp_wrappers deprecated fedora >= 28
