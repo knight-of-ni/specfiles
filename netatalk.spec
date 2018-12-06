@@ -96,9 +96,7 @@ developing applications that use %{name}.
 
 %prep
 %autosetup -p 1
-%if 0%{?with_libevent}
-rm -frv libevent/
-%endif
+%{?with_libevent:rm -frv libevent/}
 
 # Avoid re-running the autotools
 touch -r aclocal.m4 configure configure.ac macros/gssapi-check.m4
