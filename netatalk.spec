@@ -133,7 +133,7 @@ export CFLAGS="$CFLAGS -fsigned-char"
     %{?with_docbook:--with-docbook=%{_datadir}/sgml/docbook/xsl-stylesheets-%{xslver}} \
     %{?with_tracker:--with-spotlight}           \
     %{?with_tracker:--with-tracker-pkgconfig-version=%{pkgver}} \
-    %{?with_tracker:--with-dbus-daemon=/usr/bin/dbus-daemon} \
+    %{?with_tracker:--with-dbus-daemon=%{_bindir}/dbus-daemon} \
     %{?with_libevent:--without-libevent}        \
     %{?with_libevent:--with-libevent-header=%{_includedir}} \
     %{?with_libevent:--with-libevent-lib=%{_libdir}}
