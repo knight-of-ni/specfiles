@@ -105,9 +105,6 @@ touch -r aclocal.m4 configure configure.ac macros/gssapi-check.m4
 find include \( -name '*.h' -a -executable \) -exec chmod -x {} \;
 
 %build
-%ifarch ppc ppc64 s390 s390x
-export CFLAGS="$CFLAGS -fsigned-char"
-%endif
 
 %configure \
     --localstatedir=%{_localstatedir}/lib       \
