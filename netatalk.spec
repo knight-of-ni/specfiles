@@ -21,6 +21,11 @@
 %global without_tcp_wrappers 1
 %endif
 
+# rhel <= 7 need to call ldconfig
+%if 0%{?rhel} <= 7
+%global ldconfig /usr/sbin/ldconfig
+%endif
+
 Name:              netatalk
 Version:           3.1.11
 Release:           2%{?dist}
@@ -36,6 +41,8 @@ Patch0:            netatalk-3.0.1-basedir.patch
 Patch1:            netatalk-systemd-runtimedirectory.patch
 # https://github.com/Netatalk/Netatalk/pull/110
 Patch2:            netatalk-fix-incorrect-fsf-address.patch
+# https://github.com/Netatalk/Netatalk/pull/113
+Patch3:            netatalk-afpstats-python3-compat.patch
 
 BuildRequires:     rpm
 BuildRequires:     grep
@@ -77,8 +84,8 @@ BuildRequires:     libtdb-devel
 Requires:          dbus-python
 Requires:          perl(IO::Socket::INET6)
 %{?with_tracker:Requires:          dconf}
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
+%{?ldconfig:Requires(post): %{ldconfig}}
+%{?ldconfig:Requires(postun): %{ldconfig}}
 %{?systemd_requires}
 
 %description
@@ -146,21 +153,21 @@ install -pm644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/netatalk
 
 find %{buildroot} -name '*.la' -delete -print
 # Fix python shebang
-sed -i 's\^#!/usr/bin/env python$\#!/usr/bin/python2\' %{buildroot}/usr/bin/afpstats
+sed -i 's\^#!/usr/bin/env python$\#!/usr/bin/python3\' %{buildroot}/usr/bin/afpstats
 
 %check
 sh test/afpd/test.sh
 
 %post
 %systemd_post %{name}.service
-/sbin/ldconfig
+%{?ldconfig}
 
 %preun
 %systemd_preun %{name}.service
 
 %postun
 %systemd_postun_with_restart %{name}.service
-/sbin/ldconfig
+%{?ldconfig}
 
 %files
 %license COPYING COPYRIGHT
@@ -189,11 +196,13 @@ sh test/afpd/test.sh
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
-* Tue Dec 04 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.11-2
+* Wed Dec 12 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 3.1.11-2
 - Refactor specfile
 - remove sysv init support
 - let systemd manage lockfile folder
 - Remove use of epoch
+- call ldconfig only for el7
+- patch afpstats for python3
 
 * Wed Oct 31 2018 HAT <hat@fa2.so-net.ne.jp> - 5:3.1.11-1.4
 - always buildrequres gcc
