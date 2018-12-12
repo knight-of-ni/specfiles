@@ -1,4 +1,4 @@
-%global commit_long     d574b51a60a075baefe863670466ee24e6c4256e
+%global commit_long     7cbfbd38d9824535164f93a1d32c81a33a00ca31
 %global commit_short    %(c=%{commit_long}; echo ${c:0:7})
 
 Name:       raspberrypi-vc
