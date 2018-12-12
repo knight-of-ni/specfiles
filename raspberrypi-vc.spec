@@ -141,11 +141,54 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 %doc LICENCE
 %dir %{_libdir}/vc
 %dir /opt/vc
-%{_libdir}/vc/*.so
-%{_libdir}/vc/plugins/*.so
 /opt/vc/lib
-%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*.conf
-%{_udevrulesdir}/*.rules
+%config(noreplace) %{_sysconfdir}/ld.so.conf.d/raspberrypi-vc-libs.conf
+%{_udevrulesdir}/10-vchiq.rules
+%{_libdir}/vc/libEGL.so
+%{_libdir}/vc/libGLESv2.so
+%{_libdir}/vc/libOpenVG.so
+%{_libdir}/vc/libWFC.so
+%{_libdir}/vc/libbcm_host.so
+%{_libdir}/vc/libbrcmEGL.so
+%{_libdir}/vc/libbrcmGLESv2.so
+%{_libdir}/vc/libbrcmOpenVG.so
+%{_libdir}/vc/libbrcmWFC.so
+%{_libdir}/vc/libcontainers.so
+%{_libdir}/vc/libdebug_sym.so
+%{_libdir}/vc/libdtovl.so
+%{_libdir}/vc/libmmal.so
+%{_libdir}/vc/libmmal_components.so
+%{_libdir}/vc/libmmal_core.so
+%{_libdir}/vc/libmmal_util.so
+%{_libdir}/vc/libmmal_vc_client.so
+%{_libdir}/vc/libopenmaxil.so
+%{_libdir}/vc/libvchiq_arm.so
+%{_libdir}/vc/libvcos.so
+%{_libdir}/vc/libvcsm.so
+%{_libdir}/vc/plugins/reader_asf.so
+%{_libdir}/vc/plugins/reader_avi.so
+%{_libdir}/vc/plugins/reader_binary.so
+%{_libdir}/vc/plugins/reader_flv.so
+%{_libdir}/vc/plugins/reader_metadata_id3.so
+%{_libdir}/vc/plugins/reader_mkv.so
+%{_libdir}/vc/plugins/reader_mp4.so
+%{_libdir}/vc/plugins/reader_mpga.so
+%{_libdir}/vc/plugins/reader_ps.so
+%{_libdir}/vc/plugins/reader_qsynth.so
+%{_libdir}/vc/plugins/reader_raw_video.so
+%{_libdir}/vc/plugins/reader_rcv.so
+%{_libdir}/vc/plugins/reader_rtp.so
+%{_libdir}/vc/plugins/reader_rtsp.so
+%{_libdir}/vc/plugins/reader_rv9.so
+%{_libdir}/vc/plugins/reader_simple.so
+%{_libdir}/vc/plugins/reader_wav.so
+%{_libdir}/vc/plugins/writer_asf.so
+%{_libdir}/vc/plugins/writer_avi.so
+%{_libdir}/vc/plugins/writer_binary.so
+%{_libdir}/vc/plugins/writer_dummy.so
+%{_libdir}/vc/plugins/writer_mp4.so
+%{_libdir}/vc/plugins/writer_raw_video.so
+%{_libdir}/vc/plugins/writer_simple.so
 
 
 %files devel
