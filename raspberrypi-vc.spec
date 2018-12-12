@@ -18,6 +18,9 @@ BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  systemd
 
+# Packages using raspberrypi-vc must Requires this:
+#%%{?raspberrypi_vc_version:Requires: raspberrypi_vc%%{?_isa} = %%{raspberrypi_vc_version}}
+
 %description
 Libraries, utilities and demos for the Raspberry Pi BCM283x SOC GPUs
 
