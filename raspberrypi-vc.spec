@@ -2,7 +2,7 @@
 %global commit_short    %(c=%{commit_long}; echo ${c:0:7})
 
 Name:       raspberrypi-vc
-Version:    20181108
+Version:    20181212
 Release:    1.git%{commit_short}%{?dist}
 Summary:    VideoCore GPU libraries, utilities and demos for Raspberry Pi
 License:    BSD
