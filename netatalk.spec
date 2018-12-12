@@ -22,7 +22,6 @@
 %endif
 
 Name:              netatalk
-Epoch:             5
 Version:           3.1.11
 Release:           2%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
@@ -89,7 +88,7 @@ simultaneously as an AppleShare file server (AFP).
 
 %package        devel
 Summary:        Development files for %{name}
-Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}
 
 %description    devel
 This package contains libraries and header files for
@@ -194,6 +193,7 @@ sh test/afpd/test.sh
 - Refactor specfile
 - remove sysv init support
 - let systemd manage lockfile folder
+- Remove use of epoch
 
 * Wed Oct 31 2018 HAT <hat@fa2.so-net.ne.jp> - 5:3.1.11-1.4
 - always buildrequres gcc
