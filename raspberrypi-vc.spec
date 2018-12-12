@@ -160,8 +160,33 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 
 
 %files utils
-%{_bindir}/*
-%{_sbindir}/*
+%{_bindir}/containers_check_frame_int
+%{_bindir}/containers_datagram_receiver
+%{_bindir}/containers_datagram_sender
+%{_bindir}/containers_dump_pktfile
+%{_bindir}/containers_rtp_decoder
+%{_bindir}/containers_stream_client
+%{_bindir}/containers_stream_server
+%{_bindir}/containers_test
+%{_bindir}/containers_test_bits
+%{_bindir}/containers_test_uri
+%{_bindir}/containers_uri_pipe
+%{_bindir}/dtmerge
+%{_bindir}/dtoverlay
+%{_bindir}/dtoverlay-post
+%{_bindir}/dtoverlay-pre
+%{_bindir}/dtparam
+%{_bindir}/mmal_vc_diag
+%{_bindir}/raspistill
+%{_bindir}/raspivid
+%{_bindir}/raspividyuv
+%{_bindir}/raspiyuv
+%{_bindir}/tvservice
+%{_bindir}/vcgencmd
+%{_bindir}/vchiq_test
+%{_bindir}/vcmailbox
+%{_bindir}/vcsmem
+%{_sbindir}/vcfiled
 
 
 %files demo-source
