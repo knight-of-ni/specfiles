@@ -22,6 +22,10 @@ BuildRequires:  perl-generators
 BuildRequires:  perl(ExtUtils::MakeMaker)
 BuildRequires:  findutils
 
+# Needed during build for the perl test
+BuildRequires: perl(Time::ParseDate)
+BuildRequires: perl(Test::More)
+
 %description
 This module provides  a simple but complete cron  like scheduler.  I.e
 this modules can be  used for periodically executing Perl subroutines.
