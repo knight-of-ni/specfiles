@@ -12,8 +12,9 @@ Source0:   https://cpan.metacpan.org/authors/id/R/RO/ROLAND/Schedule-Cron-%{vers
 # shown in Makefile.PL
 Source1:        http://dev.perl.org/licenses/#/%{name}-Licensing.html
 
-# Patches from Debian libschedule-cron-perl source package
+# https://github.com/rhuss/schedule-cron/pull/8
 Patch0: perl-schedule-cron-fix-unescaped-left-brace.patch
+# Patch obtained from Debian libschedule-cron-perl source package
 Patch1: perl-schedule-cron-fix-spelling.patch
 
 BuildRequires:  perl-devel
