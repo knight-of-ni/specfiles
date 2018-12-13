@@ -111,6 +111,9 @@ touch -r aclocal.m4 configure configure.ac macros/gssapi-check.m4
 # fix permissions
 find include \( -name '*.h' -a -executable \) -exec chmod -x {} \;
 
+# Don't call systemctl daemon-reload during the build
+sed -i 's\-systemctl daemon-reload\\g' distrib/initscripts/Makefile.in
+
 %build
 
 %configure \
