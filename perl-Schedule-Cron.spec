@@ -12,6 +12,10 @@ Source0:   https://cpan.metacpan.org/authors/id/R/RO/ROLAND/Schedule-Cron-%{vers
 # shown in Makefile.PL
 Source1:        http://dev.perl.org/licenses/#/%{name}-Licensing.html
 
+# Patches from Debian libschedule-cron-perl source package
+Patch0: perl-schedule-cron-fix-unescaped-left-brace.patch
+Patch1: perl-schedule-cron-fix-spelling.patch
+
 BuildRequires:  perl-devel
 BuildRequires:  perl-interpreter
 BuildRequires:  perl-generators
@@ -45,7 +49,7 @@ cron).   However, it  relies on  the accuracy  of your  sleep() system
 call.
 
 %prep
-%autosetup -n Schedule-Cron-%{version}
+%autosetup -p 1 -n Schedule-Cron-%{version}
 cp -a %{SOURCE1} Licensing.html
 
 %build
