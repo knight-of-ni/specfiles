@@ -48,7 +48,7 @@ sed -i 's/\r$//' COPYING
 %files
 %license LICENSE
 %doc AUTHORS ChangeLog COPYING README docs/ samples/
-/usr/lib/cups/
+%{_cups_serverbin}/filter/
 %{_datadir}/cups/
 
 %changelog
