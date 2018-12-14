@@ -3,7 +3,6 @@ Summary:   Provides a simple but complete cron like scheduler
 Version:   1.01
 Release:   1%{?dist}
 License:   GPL+ or Artistic
-Group:     Development/Libraries
 URL:       https://metacpan.org/release/Schedule-Cron
 BuildArch: noarch
 
@@ -12,19 +11,34 @@ Source0:   https://cpan.metacpan.org/authors/id/R/RO/ROLAND/Schedule-Cron-%{vers
 # shown in Makefile.PL
 Source1:        http://dev.perl.org/licenses/#/%{name}-Licensing.html
 
-Patch0: https://github.com/rhuss/schedule-cron/pull/8.patch#/perl-schedule-cron-fix-unescaped-left-brace.patch
+# https://github.com/rhuss/schedule-cron/pull/8
+Patch0: perl-schedule-cron-fix-unescaped-left-brace.patch
 # Patch obtained from Debian libschedule-cron-perl source package
 Patch1: perl-schedule-cron-fix-spelling.patch
 
-BuildRequires:  perl-devel
 BuildRequires:  perl-interpreter
 BuildRequires:  perl-generators
 BuildRequires:  perl(ExtUtils::MakeMaker)
+BuildRequires:  perl(File::Basename)
+BuildRequires:  perl(strict)
+BuildRequires:  perl(warnings)
+BuildRequires:  perl(Data::Dumper)
+BuildRequires:  perl(subs)
+BuildRequires:  perl(vars)
 BuildRequires:  findutils
+BuildRequires:  coreutils
 
 # Needed during build for the perl test
-BuildRequires: perl(Time::ParseDate)
-BuildRequires: perl(Test::More)
+BuildRequires:  perl(Time::ParseDate) >= 2011.0505
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(Test::Pod)
+BuildRequires:  perl(Test::Pod::Coverage)
+BuildRequires:  perl(Test::Kwalitee)
+
+Requires:       perl(Config)
+Requires:       perl(Time::ParseDate) >= 2011.0505
+Requires:       perl(POSIX)
+Requires:       perl(Term::ReadLine)
 
 %description
 This module provides  a simple but complete cron  like scheduler.  I.e
@@ -57,14 +71,13 @@ call.
 cp -a %{SOURCE1} Licensing.html
 
 %build
-%{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 NO_PERLLOCAL=1
+%{__perl} Makefile.PL INSTALLDIRS=vendor NO_PERLLOCAL=1
 %make_build
 
 %install
 %make_build pure_install DESTDIR=%{buildroot}
 
 find %{buildroot} -type f -name .packlist -delete
-find %{buildroot} -type d -empty -delete
 
 %{_fixperms} %{buildroot}/*
 
