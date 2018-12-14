@@ -55,6 +55,7 @@ sed -i 's/\r$//' COPYING
 * Fri Dec 14 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-3
 - fix typo calling configure macro
 - add license and doc files
+- use _cups_serverbin macro
 
 * Mon Nov 26 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-2
 - Add gcc buildrequires for f29
