@@ -10,7 +10,7 @@ URL: http://www.dymo.com
 
 Source0: http://download.dymo.com/dymo/Software/Download%20Drivers/Linux/Download/dymo-cups-drivers-%{short_version}.tar.gz#/%{name}-%{version}.tar.gz
 
-# Patch files obtained from Debian source package
+# Patch files obtained from printer-driver-dymo Debian source package
 Patch0: 0001-Inheritate-CXXFLAGS-from-the-environment-to-use-dpkg.patch
 Patch1: 0002-Port-to-newer-cups-headers-ppd_file_t-is-only-define.patch
 
