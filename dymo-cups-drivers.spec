@@ -12,10 +12,16 @@ Source0: http://download.dymo.com/dymo/Software/Download%20Drivers/Linux/Downloa
 
 # https://github.com/matthiasbock/dymo-cups-drivers/pull/6
 Patch0: dymo-cups-drivers-fix-fsf-address.patch
+# https://github.com/matthiasbock/dymo-cups-drivers/commit/2433fa303dd9925f8b36b18406863c56766c651b
+Patch1: dymo-cups-drivers-replace-boolean-or-with-bitwise.patch
+# https://github.com/matthiasbock/dymo-cups-drivers/commit/d7ef90a48c61c898a3d69f353673d81d7540c892
+Patch2: dymo-cups-drivers-unused-var-statusok.patch
+# https://github.com/matthiasbock/dymo-cups-drivers/commit/697cfb8115054fb95b9e91d54d68f47ee3805060
+Patch3: dymo-cups-drivers-replace-deprecated-type.patch
 
 # Patch files obtained from printer-driver-dymo Debian source package
-Patch1: 0001-Inheritate-CXXFLAGS-from-the-environment-to-use-dpkg.patch
-Patch2: 0002-Port-to-newer-cups-headers-ppd_file_t-is-only-define.patch
+Patch4: 0001-Inheritate-CXXFLAGS-from-the-environment-to-use-dpkg.patch
+Patch5: 0002-Port-to-newer-cups-headers-ppd_file_t-is-only-define.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -42,7 +48,8 @@ sed -i 's/\r$//' COPYING
 %{__autoheader}
 %{__automake} --force-missing --add-missing
 %{__autoconf}
-%{configure}
+# Must enable c++11 for el7
+%{configure} CXXFLAGS="${CXXFLAGS} -std=c++11"
 %make_build
 
 %install
