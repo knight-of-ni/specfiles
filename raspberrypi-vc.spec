@@ -17,6 +17,7 @@ ExclusiveArch:  armv7hl
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  systemd
+BuildRequires:  coreutils
 
 # Packages using raspberrypi-vc must Requires this:
 #%%{?raspberrypi_vc_version:Requires: raspberrypi_vc%%{?_isa} = %%{raspberrypi_vc_version}}
@@ -91,6 +92,14 @@ popd
 pushd build
 %make_install
 popd
+
+#RPM Macros support
+mkdir -p %{buildroot}%{rpmmacrodir}
+cat > %{buildroot}%{rpmmacrodir}/macros.%{name} << EOF
+# raspberrypi-vc RPM Macros
+%raspberrypi_vc_version	   %{version}
+EOF
+touch -r LICENSE %{buildroot}%{rpmmacrodir}/macros.%{name}
 
 ### libs
 mkdir -p %{buildroot}/%{_libdir}/vc
@@ -168,6 +177,9 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 %{_libdir}/vc/libvchiq_arm.so
 %{_libdir}/vc/libvcos.so
 %{_libdir}/vc/libvcsm.so
+%{_libdir}/vc/libvcfiled_check.so
+%{_libdir}/vc/libvchostif.so
+%{_libdir}/vc/libvcilcs.so
 %{_libdir}/vc/plugins/reader_asf.so
 %{_libdir}/vc/plugins/reader_avi.so
 %{_libdir}/vc/plugins/reader_binary.so
