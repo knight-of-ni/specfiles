@@ -36,8 +36,6 @@ DYMO LabelWriter and DYMO LabelMANAGER series drivers for CUPS
 # fix wrong-file-end-of-line-encoding
 sed -i 's/\r$//' COPYING
 
-find ./ -type f | xargs sed -i  's/59 Temple Place - Suite 330, Boston, MA  02111-1307, USA/51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA/g'
-
 %build
 %{__libtoolize}
 %{__aclocal}
