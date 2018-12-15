@@ -10,9 +10,12 @@ URL: http://www.dymo.com
 
 Source0: http://download.dymo.com/dymo/Software/Download%20Drivers/Linux/Download/dymo-cups-drivers-%{short_version}.tar.gz#/%{name}-%{version}.tar.gz
 
+# https://github.com/matthiasbock/dymo-cups-drivers/pull/6
+Patch0: dymo-cups-drivers-fix-fsf-address.patch
+
 # Patch files obtained from printer-driver-dymo Debian source package
-Patch0: 0001-Inheritate-CXXFLAGS-from-the-environment-to-use-dpkg.patch
-Patch1: 0002-Port-to-newer-cups-headers-ppd_file_t-is-only-define.patch
+Patch1: 0001-Inheritate-CXXFLAGS-from-the-environment-to-use-dpkg.patch
+Patch2: 0002-Port-to-newer-cups-headers-ppd_file_t-is-only-define.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -32,6 +35,8 @@ DYMO LabelWriter and DYMO LabelMANAGER series drivers for CUPS
 
 # fix wrong-file-end-of-line-encoding
 sed -i 's/\r$//' COPYING
+
+find ./ -type f | xargs sed -i  's/59 Temple Place - Suite 330, Boston, MA  02111-1307, USA/51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA/g'
 
 %build
 %{__libtoolize}
