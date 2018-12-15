@@ -99,7 +99,8 @@ cat > %{buildroot}%{rpmmacrodir}/macros.%{name} << EOF
 # raspberrypi-vc RPM Macros
 %raspberrypi_vc_version	   %{version}
 EOF
-touch -r LICENSE %{buildroot}%{rpmmacrodir}/macros.%{name}
+# Yes - the filename really is spelled LICENCE
+touch -r LICENCE %{buildroot}%{rpmmacrodir}/macros.%{name}
 
 ### libs
 mkdir -p %{buildroot}/%{_libdir}/vc
