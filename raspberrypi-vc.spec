@@ -181,6 +181,7 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 %{_libdir}/vc/libvcfiled_check.so
 %{_libdir}/vc/libvchostif.so
 %{_libdir}/vc/libvcilcs.so
+%{_libdir}/vc/libkhrn_client.so
 %{_libdir}/vc/plugins/reader_asf.so
 %{_libdir}/vc/plugins/reader_avi.so
 %{_libdir}/vc/plugins/reader_binary.so
@@ -208,6 +209,7 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 
 
 %files devel
+%{rpmmacrodir}/macros.%{name}
 %{_includedir}/vc/*
 %{_datadir}/pkgconfig/*.pc
 %{_libdir}/vc/pkgconfig/*.pc
