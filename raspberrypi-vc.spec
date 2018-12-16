@@ -83,6 +83,7 @@ pushd build
         -DCMAKE_BUILD_TYPE=Release \
         -DVMCS_INSTALL_PREFIX=%{_prefix} \
         -DCMAKE_C_FLAGS=%{optflags} \
+        -DBUILD_SHARED_LIBS:BOOL=OFF \
         ..
 %make_build
 popd
@@ -178,10 +179,6 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 %{_libdir}/vc/libvchiq_arm.so
 %{_libdir}/vc/libvcos.so
 %{_libdir}/vc/libvcsm.so
-%{_libdir}/vc/libvcfiled_check.so
-%{_libdir}/vc/libvchostif.so
-%{_libdir}/vc/libvcilcs.so
-%{_libdir}/vc/libkhrn_client.so
 %{_libdir}/vc/plugins/reader_asf.so
 %{_libdir}/vc/plugins/reader_avi.so
 %{_libdir}/vc/plugins/reader_binary.so
