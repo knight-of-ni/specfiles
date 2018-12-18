@@ -27,13 +27,12 @@ BuildRequires:  perl(subs)
 BuildRequires:  perl(vars)
 BuildRequires:  findutils
 BuildRequires:  coreutils
+BuildRequires:  perl(POSIX)
 
 # Needed during build for the perl test
 BuildRequires:  perl(Time::ParseDate) >= 2011.0505
 BuildRequires:  perl(Test::More)
-BuildRequires:  perl(Test::Pod)
 BuildRequires:  perl(Test::Pod::Coverage)
-BuildRequires:  perl(Test::Kwalitee)
 
 Requires:       perl(Config)
 Requires:       perl(Time::ParseDate) >= 2011.0505
