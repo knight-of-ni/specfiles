@@ -3,7 +3,7 @@
 
 Name:       raspberrypi-vc
 Version:    20181212
-Release:    1.git%{commit_short}%{?dist}
+Release:    2.git%{commit_short}%{?dist}
 Summary:    VideoCore GPU libraries, utilities and demos for Raspberry Pi
 License:    BSD
 URL:        https://github.com/raspberrypi
@@ -79,6 +79,8 @@ Raspberry Pi.
 %build
 mkdir build
 pushd build
+# Must set BUILD_SHARED_LIBS=OFF
+# See for details: https://github.com/raspberrypi/userland/pull/333
 %cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DVMCS_INSTALL_PREFIX=%{_prefix} \
@@ -254,6 +256,9 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 
 
 %changelog
+* Mon Dec 17 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-2.gitd574b51
+- Build with BUILD_SHARED_LIBS OFF
+
 * Sat Nov 10 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-1.gitd574b51
 - Refactor for RPM Fusion
 - See RFBZ 5074
