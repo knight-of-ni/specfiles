@@ -1,3 +1,5 @@
+%global __requires_exclude perl\\(Time::ParseDate\\)
+
 Name:      perl-Schedule-Cron
 Summary:   Provides a simple but complete cron like scheduler
 Version:   1.01
