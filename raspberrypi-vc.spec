@@ -3,7 +3,7 @@
 
 Name:       raspberrypi-vc
 Version:    20181212
-Release:    2.git%{commit_short}%{?dist}
+Release:    3.git%{commit_short}%{?dist}
 Summary:    VideoCore GPU libraries, utilities and demos for Raspberry Pi
 License:    BSD
 URL:        https://github.com/raspberrypi
@@ -79,13 +79,14 @@ Raspberry Pi.
 %build
 mkdir build
 pushd build
-# Must set BUILD_SHARED_LIBS=OFF
+# Must set BUILD_SHARED_LIBS=OFF and BUILD_STATIC_LIBS=ON
 # See for details: https://github.com/raspberrypi/userland/pull/333
 %cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DVMCS_INSTALL_PREFIX=%{_prefix} \
         -DCMAKE_C_FLAGS=%{optflags} \
         -DBUILD_SHARED_LIBS:BOOL=OFF \
+        -DBUILD_STATIC_LIBS:BOOL=ON \
         ..
 %make_build
 popd
@@ -216,7 +217,15 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 
 
 %files static
-%{_libdir}/vc/*.a
+%{_libdir}/vc/libEGL_static.a
+%{_libdir}/vc/libGLESv2_static.a
+%{_libdir}/vc/libdebug_sym_static.a
+%{_libdir}/vc/libkhrn_client.a
+%{_libdir}/vc/libkhrn_static.a
+%{_libdir}/vc/libvcfiled_check.a
+%{_libdir}/vc/libvchostif.a
+%{_libdir}/vc/libvcilcs.a
+
 
 
 %files utils
@@ -256,6 +265,9 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 
 
 %changelog
+* Thu Dec 20 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-3.gitd574b51
+- Build with BUILD_STATIC_LIBS ON
+
 * Mon Dec 17 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-2.gitd574b51
 - Build with BUILD_SHARED_LIBS OFF
 
