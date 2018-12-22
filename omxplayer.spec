@@ -1,0 +1,170 @@
+%global commit_date     20181014
+%global commit_long     7f3faf6cadac913013248de759462bcff92f0102
+%global commit_short    %(c=%{commit_long}; echo ${c:0:7})
+# Do we really need to set this?
+%global debug_package   %{nil}
+
+Name:       omxplayer
+Version:    %{commit_date}
+Release:    3.%{commit_short}%{dist}
+Summary:    Raspberry Pi command line OMX player
+Group:      Applications/Multimedia
+License:    GPL-2.0+
+URL:        https://github.com/popcornmix/%{name}
+Source0:    %{url}/archive/%{commit_long}.tar.gz#/%{name}-%{commit_short}.tar.gz
+Source1:    %{name}.desktop
+Patch1:     0004-fix-libs-path.patch
+Patch2:     0006-video-group-check.patch
+# Refer: https://github.com/popcornmix/omxplayer/issues/649
+Patch3:     0007-Fix-keyboard-input.patch
+ExclusiveArch:  armv7hl
+
+BuildRequires:  boost-devel
+BuildRequires:  desktop-file-utils
+BuildRequires:  raspberrypi-vc-devel
+BuildRequires:  raspberrypi-vc-static
+BuildRequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(dbus-1)
+BuildRequires:  pkgconfig(freetype2)
+BuildRequires:  pkgconfig(libpcre)
+BuildRequires:  pkgconfig(libssh)
+BuildRequires:  pkgconfig(openssl)
+BuildRequires:  pkgconfig(smbclient)
+BuildRequires:  findutils
+BuildRequires:  coreutils
+BuildRequires:  sed
+
+Requires:   %{name}-libs%{?_isa} = %{version}-%{release}
+Requires:   fbset
+Requires:   gnu-free-sans-fonts
+
+%description
+OMXPlayer is a video player specifically made for the Raspberry Pi's GPU.
+It relies on the OpenMAX hardware acceleration API, which is the Broadcom's
+VideoCore officially supported API for GPU video/audio processing.
+
+
+%package libs
+Summary: Libraries used by %{name}
+Group: System Environment/Libraries
+
+
+%description libs
+Libraries used by %{name}
+
+
+%package desktop
+Summary: OMXPlayer Desktop Entry specification file
+Requires: lxterminal
+Requires: libnotify
+
+
+%description desktop
+The freedesktop Desktop Entry specification file for OMXPlayer to integrate into
+desktop environments.
+
+
+%prep
+%autosetup -p 1 -n %{name}-%{commit_long}
+
+rm -f Makefile.ffmpeg
+
+# Change all paths /opt/vc -> /usr/lib/vc
+find ./ -type f | xargs sed -i  's/\/opt\/vc/%{_libdir}/vc/g'
+
+cat > version.h << EOF
+#ifndef __VERSION_H__
+#define __VERSION_H__
+#define VERSION_DATE "%{commit_date}"
+#define VERSION_HASH "%{commit_short}"
+#define VERSION_BRANCH "master"
+#define VERSION_REPO "%{url}"
+#endif
+EOF
+
+# taken from known-good patch files
+OMX_CFLAGS="-std=c++0x -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_POSIX -DTARGET_LINUX -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CMAKE_CONFIG -D__VIDEOCORE4__ -U_FORTIFY_SOURCE -Wall -DHAVE_OMXLIB -DUSE_EXTERNAL_FFMPEG  -DHAVE_LIBAVCODEC_AVCODEC_H -DHAVE_LIBAVUTIL_OPT_H -DHAVE_LIBAVUTIL_MEM_H -DHAVE_LIBAVUTIL_AVUTIL_H -DHAVE_LIBAVFORMAT_AVFORMAT_H -DHAVE_LIBAVFILTER_AVFILTER_H -DHAVE_LIBSWRESAMPLE_SWRESAMPLE_H -DOMX -DOMX_SKIP64BIT -ftree-vectorize -DUSE_EXTERNAL_OMX -DTARGET_RASPBERRY_PI -DUSE_EXTERNAL_LIBBCM_HOST"
+OMX_INCLUDES="-I./ -Ilinux -I /usr/include/dbus-1.0 -I /usr/lib/dbus-1.0/include -I/usr/include/freetype2 -isystem/usr/include/vc -isystem/usr/include/vc/interface/vcos/pthreads"
+
+# Now update the Makefile with the flags we just set
+sed -i 's/CFLAGS=.*/CFLAGS=%{optflags}/' Makefile
+sed -i 's/CFLAGS\+=.*/CFLAGS\+=${OMX_CFLAGS}/' Makefile
+sed -i 's/LDFLAGS\+=.*/LDFLAGS\+=%{__global_ldflags}/' Makefile
+sed -i 's/INCLUDES\+=.*/INCLUDES\+=${OMX_INCLUDES}/' Makefile
+
+# Fix the font path
+sed -i 's/\/usr\/share\/fonts\/truetype\/freefont/\/usr\/share\/fonts\/gnu-free/g' omxplayer.cpp
+
+%build
+%{make_build} omxplayer.bin
+%{make_build} omxplayer.1
+
+%install
+%{__install} -d %{buildroot}/%{_bindir}
+%{__install} -p %{name} %{buildroot}/%{_bindir}
+%{__install} -p %{name}.bin %{buildroot}/%{_bindir}
+%{__install} -d %{buildroot}/%{_mandir}
+%{__install} -p %{name}.1 %{buildroot}/%{_mandir}
+%{__install} -d %{buildroot}/%{_libdir}/%{name}
+%{__install} -d %{buildroot}/%{_datadir}/applications
+%{__install} -p %{SOURCE1} %{buildroot}/%{_datadir}/applications
+desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
+
+
+%files
+%license COPYING
+%doc README.md
+%{_bindir}/%{name}
+%{_bindir}/%{name}.bin
+%{_mandir}/%{name}.1
+
+%files libs
+%license COPYING
+%dir %{_libdir}/%{name}
+%{_libdir}/%{name}/*.so*
+
+
+%files desktop
+%{_datadir}/applications/*.desktop
+
+
+%changelog
+* Sat Dec 22 2018 Andrew Bauer <zonexpertconsulting@outlook.com> 20181014-3.7f3faf6
+- Modify file paths in the specfile rather than via patch files
+- Build against ffmpeg pacakge, rather than bundled
+
+* Thu Nov 01 2018 Vaughan Agrez <devel at agrez dot net> 20181014-2.7f3faf6
+- Fix keyboard input for Fedberry 29
+- Re-enable man file generation for f27 & f29
+- Update Requires
+
+* Sun Oct 14 2018 Vaughan Agrez <devel at agrez dot net> 20181014-1.7f3faf6
+- Update to git commit: 7f3faf6cadac913013248de759462bcff92f0102
+- Bump ffmpeg release to 4.0.2
+- Refactor Makefile / Makefile.ffmpeg patches
+- Drop makefile.include patch
+- Disable generation of man file
+- Fix BuildRequires
+
+* Thu Apr 05 2018 Vaughan Agrez <devel at agrez dot net> 20170908-2.037c3c1
+- Bump ffmpeg release to 3.3.6
+- Add desktop file
+- Add video group check (Patch 5)
+
+* Thu Nov 23 2017 Vaughan Agrez <devel at agrez dot net> 20170908-1.037c3c1
+- Update to git commit: 037c3c1eab2601dc1e8fb329c2290eb2380acb3c
+- Bump ffmpeg release to 3.3.5
+- Drop ffmpeg openssl build fixes (merged upstream)
+
+* Tue Jul 25 2017 Vaughan Agrez <devel at agrez dot net> 20170330-3.061425a5
+- Fix building against openssl >= 1.1.0 (Patches 5 & 6)
+- Bump ffmpeg release to 3.1.9
+- Exclude Requires/Provides for bundled libs
+- Use %%{make_build} to build ffmpeg
+- Drop %%post & %%postun sections
+
+* Mon Apr 24 2017 Vaughan Agrez <devel at agrez dot net> 20170330-2.061425a5
+- Add requires for fbset
+
+* Thu Apr 20 2017 Vaughan Agrez <devel at agrez dot net> 20170330-1.061425a5
+- Initial package
