@@ -23,6 +23,7 @@ BuildRequires:  boost-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  raspberrypi-vc-devel
 BuildRequires:  raspberrypi-vc-static
+BuildRequires:  ffmpeg-devel
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(freetype2)
@@ -70,7 +71,7 @@ desktop environments.
 rm -f Makefile.ffmpeg
 
 # Change all paths /opt/vc -> /usr/lib/vc
-find ./ -type f | xargs sed -i  's/\/opt\/vc/%{_libdir}/vc/g'
+find ./ -type f | xargs sed -i  's!/opt/vc!%{_libdir}/vc!g'
 
 cat > version.h << EOF
 #ifndef __VERSION_H__
