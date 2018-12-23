@@ -89,10 +89,10 @@ cat > version.h << EOF
 EOF
 
 # Now update the Makefile with the flags we just set
-sed -i 's!^CFLAGS=.*!CFLAGS=%{optflags}!' Makefile
-sed -i 's!^CFLAGS\+=.*!CFLAGS\+=%{omx_cflags}!' Makefile
-sed -i 's!^LDFLAGS\+=.*!LDFLAGS\+=%{__global_ldflags}!' Makefile
-sed -i 's!^INCLUDES\+=.*!INCLUDES\+=%{omx_includes}!' Makefile
+sed -ri 's!^CFLAGS=.*!CFLAGS=%{optflags}!' Makefile
+sed -ri 's!^CFLAGS\+=.*!CFLAGS\+=%{omx_cflags}!' Makefile
+sed -ri 's!^LDFLAGS\+=.*!LDFLAGS\+=%{__global_ldflags}!' Makefile
+sed -ri 's!^INCLUDES\+=.*!INCLUDES\+=%{omx_includes}!' Makefile
 
 # Fix the font path
 sed -i 's!/usr/share/fonts/truetype/freefont!/usr/share/fonts/gnu-free!g' omxplayer.cpp
