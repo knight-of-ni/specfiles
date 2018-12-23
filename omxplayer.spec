@@ -94,6 +94,9 @@ sed -ri 's!^INCLUDES\+=.*!INCLUDES\+=%{omx_includes}!' Makefile
 # Fix the font path
 sed -i 's!/usr/share/fonts/truetype/freefont!/usr/share/fonts/gnu-free!g' omxplayer.cpp
 
+# Fix the bash shebang
+sed -i 's~^#!/bin/bash~#!/usr/bin/bash~' *.sh omxplayer
+
 %build
 %{make_build} omxplayer.bin
 # build the manpage with ronn instead of using http://mantastic.herokuapp.com/
@@ -108,15 +111,19 @@ ronn < README.md > omxplayer.1
 %{__install} -d %{buildroot}/%{_libdir}/%{name}
 %{__install} -d %{buildroot}/%{_datadir}/applications
 %{__install} -p %{SOURCE1} %{buildroot}/%{_datadir}/applications
-desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 
+desktop-file-install					\
+	--dir %{buildroot}%{_datadir}/applications	\
+	--delete-original				\
+	--mode 644					\
+	%{buildroot}%{_datadir}/applications/%{name}.desktop
 
 %files
 %license COPYING
 %doc README.md
 %{_bindir}/%{name}
 %{_bindir}/%{name}.bin
-%{_mandir}/man1/%{name}.1
+%{_mandir}/man1/%{name}.1.gz
 
 %files desktop
 %{_datadir}/applications/*.desktop
