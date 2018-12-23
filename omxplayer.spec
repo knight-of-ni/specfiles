@@ -40,6 +40,7 @@ BuildRequires:  findutils
 BuildRequires:  coreutils
 BuildRequires:  sed
 BuildRequires:  gcc-c++
+BuildRequires:  rubygem-ronn
 
 Requires:   %{name}-libs%{?_isa} = %{version}-%{release}
 Requires:   fbset
@@ -95,7 +96,8 @@ sed -i 's!/usr/share/fonts/truetype/freefont!/usr/share/fonts/gnu-free!g' omxpla
 
 %build
 %{make_build} omxplayer.bin
-%{make_build} omxplayer.1
+# build the manpage with ronn instead of using http://mantastic.herokuapp.com/
+ronn < README.md > omxplayer.1
 
 %install
 %{__install} -d %{buildroot}/%{_bindir}
