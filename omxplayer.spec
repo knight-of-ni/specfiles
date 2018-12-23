@@ -1,7 +1,7 @@
 %global commit_date     20181014
 %global commit_long     7f3faf6cadac913013248de759462bcff92f0102
 %global commit_short    %(c=%{commit_long}; echo ${c:0:7})
-# Do we really need to set this?
+# Build process does not produce any debug files
 %global debug_package   %{nil}
 
 # taken from known-good patch files
@@ -112,11 +112,11 @@ ronn < README.md > omxplayer.1
 %{__install} -d %{buildroot}/%{_datadir}/applications
 %{__install} -p %{SOURCE1} %{buildroot}/%{_datadir}/applications
 
-desktop-file-install					\
-	--dir %{buildroot}%{_datadir}/applications	\
-	--delete-original				\
-	--mode 644					\
-	%{buildroot}%{_datadir}/applications/%{name}.desktop
+desktop-file-install                                    \
+        --dir %{buildroot}%{_datadir}/applications      \
+        --delete-original                               \
+        --mode 644                                      \
+        %{buildroot}%{_datadir}/applications/%{name}.desktop
 
 %files
 %license COPYING
