@@ -88,13 +88,13 @@ OMX_CFLAGS="-std=c++0x -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_P
 OMX_INCLUDES="-I./ -Ilinux -I /usr/include/dbus-1.0 -I /usr/lib/dbus-1.0/include -I/usr/include/freetype2 -isystem/usr/include/vc -isystem/usr/include/vc/interface/vcos/pthreads"
 
 # Now update the Makefile with the flags we just set
-sed -i 's/CFLAGS=.*/CFLAGS=%{optflags}/' Makefile
-sed -i 's/CFLAGS\+=.*/CFLAGS\+=${OMX_CFLAGS}/' Makefile
-sed -i 's/LDFLAGS\+=.*/LDFLAGS\+=%{__global_ldflags}/' Makefile
-sed -i 's/INCLUDES\+=.*/INCLUDES\+=${OMX_INCLUDES}/' Makefile
+sed -i 's!CFLAGS=.*!CFLAGS=%{optflags}!' Makefile
+sed -i 's!CFLAGS\+=.*!CFLAGS\+=${OMX_CFLAGS}!' Makefile
+sed -i 's!LDFLAGS\+=.*!LDFLAGS\+=%{__global_ldflags}!' Makefile
+sed -i 's!INCLUDES\+=.*!INCLUDES\+=${OMX_INCLUDES}!' Makefile
 
 # Fix the font path
-sed -i 's/\/usr\/share\/fonts\/truetype\/freefont/\/usr\/share\/fonts\/gnu-free/g' omxplayer.cpp
+sed -i 's!/usr/share/fonts/truetype/freefont!/usr/share/fonts/gnu-free!g' omxplayer.cpp
 
 %build
 %{make_build} omxplayer.bin
