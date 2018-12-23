@@ -6,8 +6,8 @@
 
 # taken from known-good patch files
 %global omx_cflags -std=c++0x -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_POSIX -DTARGET_LINUX -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CMAKE_CONFIG -D__VIDEOCORE4__ -U_FORTIFY_SOURCE -Wall -DHAVE_OMXLIB -DUSE_EXTERNAL_FFMPEG  -DHAVE_LIBAVCODEC_AVCODEC_H -DHAVE_LIBAVUTIL_OPT_H -DHAVE_LIBAVUTIL_MEM_H -DHAVE_LIBAVUTIL_AVUTIL_H -DHAVE_LIBAVFORMAT_AVFORMAT_H -DHAVE_LIBAVFILTER_AVFILTER_H -DHAVE_LIBSWRESAMPLE_SWRESAMPLE_H -DOMX -DOMX_SKIP64BIT -ftree-vectorize -DUSE_EXTERNAL_OMX -DTARGET_RASPBERRY_PI -DUSE_EXTERNAL_LIBBCM_HOST
-%global omx_ldflags -L./ -L /usr/lib/vc -lc -lbrcmGLESv2 -lbrcmEGL -lbcm_host -lopenmaxil -lfreetype -lz -lasound
-%global omx_includes -I./ -Ilinux -I /usr/include/ffmpeg -I /usr/include/dbus-1.0 -I /usr/lib/dbus-1.0/include -I/usr/include/freetype2 -isystem/usr/include/vc -isystem/usr/include/vc/interface/vcos/pthreads
+%global omx_ldflags -L./ -L %{_libdir}/vc -lc -lbrcmGLESv2 -lbrcmEGL -lbcm_host -lopenmaxil -lfreetype -lz -lasound
+%global omx_includes -I./ -Ilinux -I %{_includedir}/ffmpeg -I %{_includedir}/dbus-1.0 -I %{_libdir}/dbus-1.0/include -I%{_includedir}/freetype2 -isystem%{_includedir}/vc -isystem%{_includedir}/vc/interface/vcos/pthreads
 
 Name:       omxplayer
 Version:    %{commit_date}
@@ -133,6 +133,10 @@ desktop-file-install					\
 * Sat Dec 22 2018 Andrew Bauer <zonexpertconsulting@outlook.com> 20181014-3.7f3faf6
 - Modify file paths in the specfile rather than via patch files
 - Build against ffmpeg pacakge, rather than bundled
+- use ronn to generate man page
+- fix shebang
+- generate version.h 
+- use autosetup
 
 * Thu Nov 01 2018 Vaughan Agrez <devel at agrez dot net> 20181014-2.7f3faf6
 - Fix keyboard input for Fedberry 29
