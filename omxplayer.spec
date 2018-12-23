@@ -34,6 +34,7 @@ BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  findutils
 BuildRequires:  coreutils
 BuildRequires:  sed
+BuildRequires:  gcc-c++
 
 Requires:   %{name}-libs%{?_isa} = %{version}-%{release}
 Requires:   fbset
