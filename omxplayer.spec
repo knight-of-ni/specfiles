@@ -51,15 +51,6 @@ It relies on the OpenMAX hardware acceleration API, which is the Broadcom's
 VideoCore officially supported API for GPU video/audio processing.
 
 
-%package libs
-Summary: Libraries used by %{name}
-Group: System Environment/Libraries
-
-
-%description libs
-Libraries used by %{name}
-
-
 %package desktop
 Summary: OMXPlayer Desktop Entry specification file
 Requires: lxterminal
@@ -124,12 +115,6 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 %{_bindir}/%{name}
 %{_bindir}/%{name}.bin
 %{_mandir}/%{name}.1
-
-%files libs
-%license COPYING
-%dir %{_libdir}/%{name}
-%{_libdir}/%{name}/*.so*
-
 
 %files desktop
 %{_datadir}/applications/*.desktop
