@@ -78,6 +78,9 @@ rm -f Makefile.ffmpeg
 # Change all paths /opt/vc -> /usr/lib/vc
 find ./ -type f | xargs sed -i  's!/opt/vc!%{_libdir}/vc!g'
 
+# gen_version.sh assumes we are in a git repo
+sed -i 's!bash gen_version.sh > version.h!!' Makefile
+
 cat > version.h << EOF
 #ifndef __VERSION_H__
 #define __VERSION_H__
