@@ -1,8 +1,6 @@
 %global commit_date     20181014
 %global commit_long     7f3faf6cadac913013248de759462bcff92f0102
 %global commit_short    %(c=%{commit_long}; echo ${c:0:7})
-# Build process does not produce any debug files
-%global debug_package   %{nil}
 
 # taken from known-good patch files
 %global omx_cflags -std=c++0x -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_POSIX -DTARGET_LINUX -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CMAKE_CONFIG -D__VIDEOCORE4__ -U_FORTIFY_SOURCE -Wall -DHAVE_OMXLIB -DUSE_EXTERNAL_FFMPEG  -DHAVE_LIBAVCODEC_AVCODEC_H -DHAVE_LIBAVUTIL_OPT_H -DHAVE_LIBAVUTIL_MEM_H -DHAVE_LIBAVUTIL_AVUTIL_H -DHAVE_LIBAVFORMAT_AVFORMAT_H -DHAVE_LIBAVFILTER_AVFILTER_H -DHAVE_LIBSWRESAMPLE_SWRESAMPLE_H -DOMX -DOMX_SKIP64BIT -ftree-vectorize -DUSE_EXTERNAL_OMX -DTARGET_RASPBERRY_PI -DUSE_EXTERNAL_LIBBCM_HOST
@@ -98,7 +96,7 @@ sed -i 's!/usr/share/fonts/truetype/freefont!/usr/share/fonts/gnu-free!g' omxpla
 sed -i 's~^#!/bin/bash~#!/usr/bin/bash~' *.sh omxplayer
 
 %build
-%{make_build} omxplayer.bin
+%{make_build} omxplayer.bin STRIP=/bin/true
 # build the manpage with ronn instead of using http://mantastic.herokuapp.com/
 ronn < README.md > omxplayer.1
 
