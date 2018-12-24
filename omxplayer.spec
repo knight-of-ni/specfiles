@@ -40,7 +40,6 @@ BuildRequires:  sed
 BuildRequires:  gcc-c++
 BuildRequires:  rubygem-ronn
 
-Requires:   %{name}-libs%{?_isa} = %{version}-%{release}
 Requires:   fbset
 Requires:   gnu-free-sans-fonts
 
