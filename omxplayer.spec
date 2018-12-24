@@ -90,10 +90,10 @@ sed -ri 's!^LDFLAGS\+=.*!LDFLAGS\+=%{__global_ldflags}!' Makefile
 sed -ri 's!^INCLUDES\+=.*!INCLUDES\+=%{omx_includes}!' Makefile
 
 # Fix the font path
-sed -i 's!/usr/share/fonts/truetype/freefont!/usr/share/fonts/gnu-free!g' omxplayer.cpp
+sed -i 's!/usr/share/fonts/truetype/freefont!%{_datadir}/fonts/gnu-free!g' omxplayer.cpp
 
 # Fix the bash shebang
-sed -i 's~^#!/bin/bash~#!/usr/bin/bash~' *.sh omxplayer
+sed -i 's~^#!/bin/bash~#!%{_bindir}/bash~' *.sh omxplayer
 
 %build
 %{make_build} omxplayer.bin STRIP=/bin/true
