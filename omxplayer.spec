@@ -104,7 +104,7 @@ ronn < README.md > omxplayer.1
 %{__install} -p %{name} %{buildroot}/%{_bindir}
 %{__install} -p %{name}.bin %{buildroot}/%{_bindir}
 %{__install} -d %{buildroot}/%{_mandir}/man1
-%{__install} -p %{name}.1 %{buildroot}/%{_mandir}/man1
+%{__install} -pm 644 %{name}.1 %{buildroot}/%{_mandir}/man1
 %{__install} -d %{buildroot}/%{_libdir}/%{name}
 %{__install} -d %{buildroot}/%{_datadir}/applications
 %{__install} -p %{SOURCE1} %{buildroot}/%{_datadir}/applications
