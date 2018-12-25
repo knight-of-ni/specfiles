@@ -20,6 +20,11 @@ Patch1:     0004-fix-libs-path.patch
 Patch2:     0006-video-group-check.patch
 # Refer: https://github.com/popcornmix/omxplayer/issues/649
 Patch3:     0007-Fix-keyboard-input.patch
+# Refer: https://github.com/popcornmix/omxplayer/pull/670
+Patch4:     omxplayer-fix-incorrect-fsf-address.patch
+# Refer: https://github.com/popcornmix/omxplayer/pull/671
+Patch5:     omxplayer-use-type-p.patch
+
 ExclusiveArch:  armv7hl
 
 BuildRequires:  boost-devel
@@ -134,6 +139,7 @@ desktop-file-install                                    \
 - fix shebang
 - generate version.h 
 - use autosetup
+- add patches to fix fsf-address and non-fatal errors shown on the cmdline
 
 * Thu Nov 01 2018 Vaughan Agrez <devel at agrez dot net> 20181014-2.7f3faf6
 - Fix keyboard input for Fedberry 29
