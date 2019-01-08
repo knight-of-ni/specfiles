@@ -11,7 +11,6 @@ Name:       omxplayer
 Version:    %{commit_date}
 Release:    3.%{commit_short}%{dist}
 Summary:    Raspberry Pi command line OMX player
-Group:      Applications/Multimedia
 License:    GPLv2+
 URL:        https://github.com/popcornmix/%{name}
 Source0:    %{url}/archive/%{commit_long}.tar.gz#/%{name}-%{commit_short}.tar.gz
@@ -25,7 +24,7 @@ Patch4:     omxplayer-fix-incorrect-fsf-address.patch
 # Refer: https://github.com/popcornmix/omxplayer/pull/671
 Patch5:     omxplayer-use-type-p.patch
 
-ExclusiveArch:  armv7hl
+ExclusiveArch:  %{arm}
 
 BuildRequires:  boost-devel
 BuildRequires:  desktop-file-utils
