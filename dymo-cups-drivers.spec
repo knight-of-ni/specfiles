@@ -63,6 +63,7 @@ autoreconf --force --install
 * Tue Jan 08 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-4
 - don't own cups folders
 - COPYING not needed, since content is the same as LICENSE
+- fix autotools deprecration warnings
 
 * Mon Jan 07 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-3
 - fix typo calling configure macro
