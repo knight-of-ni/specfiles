@@ -15,7 +15,9 @@ License:    GPLv2+
 URL:        https://github.com/popcornmix/%{name}
 Source0:    %{url}/archive/%{commit_long}.tar.gz#/%{name}-%{commit_short}.tar.gz
 Source1:    %{name}.desktop
+# Refer: https://github.com/fedberry/omxplayer/blob/master/0004-fix-libs-path.patch
 Patch1:     0004-fix-libs-path.patch
+# Refer https://github.com/fedberry/omxplayer/blob/master/0006-video-group-check.patch
 Patch2:     0006-video-group-check.patch
 # Refer: https://github.com/popcornmix/omxplayer/issues/649
 Patch3:     0007-Fix-keyboard-input.patch
