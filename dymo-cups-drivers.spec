@@ -41,9 +41,6 @@ DYMO LabelWriter and DYMO LabelMANAGER series drivers for CUPS
 %prep
 %autosetup -p 1
 
-# fix wrong-file-end-of-line-encoding
-sed -i 's/\r$//' COPYING
-
 %build
 autoreconf --force --install
 # Must enable c++11 for el7
@@ -57,7 +54,7 @@ autoreconf --force --install
 %license LICENSE
 %doc AUTHORS ChangeLog README docs/ samples/
 %{_cups_serverbin}/filter/*
-%{_datadir}/cups/*
+%{_datadir}/cups/model/*
 
 %changelog
 * Tue Jan 08 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-4
