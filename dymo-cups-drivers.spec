@@ -43,11 +43,7 @@ DYMO LabelWriter and DYMO LabelMANAGER series drivers for CUPS
 sed -i 's/\r$//' COPYING
 
 %build
-%{__libtoolize}
-%{__aclocal}
-%{__autoheader}
-%{__automake} --force-missing --add-missing
-%{__autoconf}
+autoreconf --force --install
 # Must enable c++11 for el7
 %{configure} CXXFLAGS="${CXXFLAGS} -std=c++11"
 %make_build
@@ -62,10 +58,11 @@ sed -i 's/\r$//' COPYING
 %{_datadir}/cups/
 
 %changelog
-* Fri Dec 14 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-3
+* Mon Jan 07 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-3
 - fix typo calling configure macro
 - add license and doc files
 - use _cups_serverbin macro
+- use autoreconf
 
 * Mon Nov 26 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-2
 - Add gcc buildrequires for f29
