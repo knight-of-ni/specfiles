@@ -126,7 +126,7 @@ desktop-file-install                                    \
 %doc README.md
 %{_bindir}/%{name}
 %{_bindir}/%{name}.bin
-%{_mandir}/man1/%{name}.1.gz
+%{_mandir}/man1/%{name}.1.*
 
 %files desktop
 %{_datadir}/applications/*.desktop
