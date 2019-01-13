@@ -27,6 +27,7 @@
 %endif
 
 Name:              netatalk
+Epoch:             5
 Version:           3.1.12
 Release:           1%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
@@ -199,14 +200,13 @@ sh test/afpd/test.sh
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
-* Wed Jan 09 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 3.1.12-1
+* Wed Jan 09 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-1
 - Netatalk 3.1.12 release
 
-* Wed Dec 12 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 3.1.11-2
+* Wed Dec 12 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.11-2
 - Refactor specfile
 - remove sysv init support
 - let systemd manage lockfile folder
-- Remove use of epoch
 - call ldconfig only for el7
 - patch afpstats for python3
 
