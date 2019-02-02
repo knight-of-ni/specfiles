@@ -34,7 +34,7 @@ Summary:           Open Source Apple Filing Protocol(AFP) File Server
 License:           GPLv2+
 # Project is also mirrored at https://github.com/Netatalk/Netatalk
 URL:               http://netatalk.sourceforge.net
-Source0:           http://download.sourceforge.net/netatalk/netatalk-%{version}.tar.bz2
+Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.bz2
 Source1:           netatalk.pam-system-auth
 
 # From http://www003.upp.so-net.ne.jp/hat/files/netatalk-3.1.7-0.1.fc22.src.rpm
