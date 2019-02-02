@@ -96,7 +96,7 @@ simultaneously as an AppleShare file server (AFP).
 
 %package        devel
 Summary:        Development files for %{name}
-Requires:       %{name}%{?_isa} = %{version}
+Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description    devel
 This package contains libraries and header files for
