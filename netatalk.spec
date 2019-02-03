@@ -105,7 +105,6 @@ developing applications that use %{name}.
 
 %prep
 %autosetup -p 1
-rm install-sh
 %{?with_libevent:rm -frv libevent/}
 
 # Avoid re-running the autotools
