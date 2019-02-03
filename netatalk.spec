@@ -31,7 +31,7 @@ Epoch:             5
 Version:           3.1.12
 Release:           2%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
-License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL
+License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT
 # Project is also mirrored at https://github.com/Netatalk/Netatalk
 URL:               http://netatalk.sourceforge.net
 Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.bz2
