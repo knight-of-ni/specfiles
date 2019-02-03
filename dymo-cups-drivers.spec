@@ -6,7 +6,7 @@
 
 Name: dymo-cups-drivers
 Version: %{short_version}.5
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: DYMO LabelWriter Drivers for CUPS
 License: GPLv2+
 URL: http://www.dymo.com
@@ -62,9 +62,11 @@ autoreconf --force --install
 %{_datadir}/cups/model/*
 
 %changelog
-* Sun Feb 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-5
+* Sun Feb 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-6
 - BZ1669976: update License tag, buildrequires python3-cups
-- Remove obsolete Group tag
+
+* Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.0.5-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
 * Tue Jan 08 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-4
 - don't own cups folders
