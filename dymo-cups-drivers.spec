@@ -8,7 +8,6 @@ Name: dymo-cups-drivers
 Version: %{short_version}.5
 Release: 5%{?dist}
 Summary: DYMO LabelWriter Drivers for CUPS
-Group: System Environment/Libraries
 License: GPLv2+
 URL: http://www.dymo.com
 
@@ -64,9 +63,8 @@ autoreconf --force --install
 
 %changelog
 * Sun Feb 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-5
-- BZ1669976 
-- update License tag
-- buildrequires python3-cups
+- BZ1669976: update License tag, buildrequires python3-cups
+- Remove obsolete Group tag
 
 * Tue Jan 08 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-4
 - don't own cups folders
