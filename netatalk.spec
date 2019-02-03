@@ -29,9 +29,9 @@
 Name:              netatalk
 Epoch:             5
 Version:           3.1.12
-Release:           1%{?dist}
+Release:           2%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
-License:           GPLv2+
+License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD
 # Project is also mirrored at https://github.com/Netatalk/Netatalk
 URL:               http://netatalk.sourceforge.net
 Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.bz2
@@ -48,6 +48,7 @@ Patch3:            netatalk-afpstats-python3-compat.patch
 BuildRequires:     rpm
 BuildRequires:     grep
 BuildRequires:     perl-interpreter
+BuildRequires:     perl-generators
 BuildRequires:     sed
 BuildRequires:     coreutils
 BuildRequires:     findutils
@@ -83,7 +84,7 @@ BuildRequires:     libtdb-devel
 %{!?without_tcp_wrappers:BuildRequires:     tcp_wrappers-devel}
 
 Requires:          dbus-python
-Requires:          perl(IO::Socket::INET6)
+Requires:          perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 %{?with_tracker:Requires:          dconf}
 %{?ldconfig:Requires(post): %{ldconfig}}
 %{?ldconfig:Requires(postun): %{ldconfig}}
@@ -104,6 +105,7 @@ developing applications that use %{name}.
 
 %prep
 %autosetup -p 1
+rm install-sh
 %{?with_libevent:rm -frv libevent/}
 
 # Avoid re-running the autotools
@@ -148,7 +150,7 @@ sed -i 's\-systemctl daemon-reload\\g' distrib/initscripts/Makefile.in
 
 %make_build
 # Build the local docs.
-make -C doc/manual html-local
+%make_build -C doc/manual html-local
 
 %install
 %make_install
@@ -200,6 +202,10 @@ sh test/afpd/test.sh
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
+* Sun Feb 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-2
+- fix license
+- buildrequire perl-generators, require perl version
+
 * Wed Jan 09 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-1
 - Netatalk 3.1.12 release
 
