@@ -204,6 +204,7 @@ sh test/afpd/test.sh
 * Sun Feb 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-2
 - fix license
 - buildrequire perl-generators, require perl version
+- fix epoch
 
 * Wed Jan 09 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-1
 - Netatalk 3.1.12 release
