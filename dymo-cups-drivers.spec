@@ -1,11 +1,15 @@
 %global short_version 1.4.0
 
+%if 0%{?fedora}
+%global with_python3_cups 1
+%endif
+
 Name: dymo-cups-drivers
 Version: %{short_version}.5
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: DYMO LabelWriter Drivers for CUPS
 Group: System Environment/Libraries
-License: GPLv2
+License: GPLv2+
 URL: http://www.dymo.com
 
 Source0: http://download.dymo.com/dymo/Software/Download%20Drivers/Linux/Download/dymo-cups-drivers-%{short_version}.tar.gz#/%{name}-%{version}.tar.gz
@@ -32,6 +36,8 @@ BuildRequires: glibc-headers
 BuildRequires: libtool
 BuildRequires: gcc-c++
 BuildRequires: sed
+%{?with_python3_cups:BuildRequires: python3-cups}
+%{!?with_python3_cups:BuildRequires: python-cups}
 
 Requires: cups
 
@@ -57,6 +63,11 @@ autoreconf --force --install
 %{_datadir}/cups/model/*
 
 %changelog
+* Sun Feb 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-5
+- BZ1669976 
+- update License tag
+- buildrequires python3-cups
+
 * Tue Jan 08 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 1.4.0.5-4
 - don't own cups folders
 - COPYING not needed, since content is the same as LICENSE
