@@ -21,8 +21,8 @@
 %global without_tcp_wrappers 1
 %endif
 
-# rhel <= 7 need to call ldconfig
-%if 0%{?rhel} <= 7
+# rhel need to call ldconfig
+%if 0%{?rhel}
 %global ldconfig /usr/sbin/ldconfig
 %endif
 
