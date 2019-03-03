@@ -29,17 +29,18 @@
 Name:              netatalk
 Epoch:             5
 Version:           3.1.12
-Release:           2%{?dist}
+Release:           3%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
 License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT
 # Project is also mirrored at https://github.com/Netatalk/Netatalk
 URL:               http://netatalk.sourceforge.net
 Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.bz2
 Source1:           netatalk.pam-system-auth
+Source2:           netatalk.conf
 
 # From http://www003.upp.so-net.ne.jp/hat/files/netatalk-3.1.7-0.1.fc22.src.rpm
 Patch0:            netatalk-3.0.1-basedir.patch
-Patch1:            netatalk-systemd-runtimedirectory.patch
+Patch1:            netatalk-systemd-execstartpre.patch
 # https://github.com/Netatalk/Netatalk/pull/110
 Patch2:            netatalk-fix-incorrect-fsf-address.patch
 # https://github.com/Netatalk/Netatalk/pull/113
@@ -156,6 +157,9 @@ sed -i 's\-systemctl daemon-reload\\g' distrib/initscripts/Makefile.in
 # Use specific pam conf.
 install -pm644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/netatalk
 
+# install our tmpfiles config
+install -Dpm644 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/netatalk.conf
+
 find %{buildroot} -name '*.la' -delete -print
 # Fix python shebang
 sed -i 's\^#!/usr/bin/env python$\#!/usr/bin/python3\' %{buildroot}/usr/bin/afpstats
@@ -191,6 +195,7 @@ sh test/afpd/test.sh
 %exclude %{_mandir}/man*/netatalk-config*
 %{_sbindir}/*
 %{_unitdir}/netatalk.service
+%{_tmpfilesdir}/netatalk.conf
 %{_localstatedir}/lib/netatalk
 
 %files devel
@@ -201,6 +206,9 @@ sh test/afpd/test.sh
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
+* Sun Mar 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-3
+- execstartpre instead of runtimedirectory in service file for el7 compat
+
 * Sun Feb 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-2
 - fix license
 - buildrequire perl-generators, require perl version
