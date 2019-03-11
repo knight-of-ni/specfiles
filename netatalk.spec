@@ -26,10 +26,17 @@
 %global ldconfig /sbin/ldconfig
 %endif
 
+# older distros use python2
+%if 0%{?rhel} < 8
+%global python_bin /usr/bin/python2
+%else
+%global python_bin /usr/bin/python3
+%endif
+
 Name:              netatalk
 Epoch:             5
 Version:           3.1.12
-Release:           3%{?dist}
+Release:           4%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
 License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT
 # Project is also mirrored at https://github.com/Netatalk/Netatalk
@@ -162,7 +169,7 @@ install -Dpm644 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/netatalk.conf
 
 find %{buildroot} -name '*.la' -delete -print
 # Fix python shebang
-sed -i 's\^#!/usr/bin/env python$\#!/usr/bin/python3\' %{buildroot}/usr/bin/afpstats
+sed -i 's\^#!/usr/bin/env python$\#!%{python_bin}\' %{buildroot}/usr/bin/afpstats
 
 %check
 sh test/afpd/test.sh
@@ -206,6 +213,9 @@ sh test/afpd/test.sh
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
+* Sun Mar 10 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-4
+- use python2 binary for el7 compat, use python3 binary everywhere else
+
 * Sun Mar 03 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-3
 - execstartpre instead of runtimedirectory in service file for el7 compat
 
