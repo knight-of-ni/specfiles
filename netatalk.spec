@@ -26,11 +26,11 @@
 %global ldconfig /sbin/ldconfig
 %endif
 
-# older distros use python2
-%if 0%{?rhel} < 8
-%global python_bin /usr/bin/python2
-%else
+# set path to python binary per fedora packaging guidelines
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %global python_bin /usr/bin/python3
+%else
+%global python_bin /usr/bin/python2
 %endif
 
 Name:              netatalk
