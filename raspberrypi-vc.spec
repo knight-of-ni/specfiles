@@ -1,9 +1,9 @@
-%global commit_long     7cbfbd38d9824535164f93a1d32c81a33a00ca31
+%global commit_long     ff2bd4552145e8dc190276d8fbdbadc7e8e0da78
 %global commit_short    %(c=%{commit_long}; echo ${c:0:7})
 
 Name:       raspberrypi-vc
-Version:    20181212
-Release:    3.git%{commit_short}%{?dist}
+Version:    20190415
+Release:    1.git%{commit_short}%{?dist}
 Summary:    VideoCore GPU libraries, utilities and demos for Raspberry Pi
 License:    BSD
 URL:        https://github.com/raspberrypi
@@ -135,6 +135,7 @@ mv %{buildroot}/%{_usrsrc}/hello_pi %{buildroot}/%{_usrsrc}/%{name}-demo-source
 
 ### remove sysvinit vcfiled
 rm -rf %{buildroot}%{_sysconfdir}/init.d
+rm -rf %{buildroot}%{_prefix}%{_sysconfdir}/init.d
 rm -rf %{buildroot}%{_datadir}/install
 
 ### install ldconfig conf
@@ -265,6 +266,9 @@ ln -s %{_includedir}/vc %{buildroot}/opt/vc/include
 
 
 %changelog
+* Mon Apr 29 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 20190415-1.gitd574b51
+- update package to April 15 commit ff2bd45
+
 * Thu Dec 20 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 20181108-3.gitd574b51
 - Build with BUILD_STATIC_LIBS ON
 
