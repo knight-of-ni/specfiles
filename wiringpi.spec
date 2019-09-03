@@ -3,20 +3,20 @@
 
 Name:       wiringpi
 Version:    2.46
-Release:    4%{?dist}
+Release:    5%{?dist}
 Summary:    PIN based GPIO access library for BCM283x SoC devices
 License:    LGPLv3
 URL:        http://wiringpi.com
 Source0:    https://git.drogon.net/?p=wiringPi;a=snapshot;h=%{commit_long};sf=tgz#/wiringPi-%{commit_short}.tar.gz
 Patch0:     0001-Makefiles.patch
-ExclusiveArch: armv7hl
+ExclusiveArch: armv7hl armv7hnl
 
 BuildRequires:  gcc
 
 # wiringpi-libs pacakge exists in some third party repos
 # flag it as conflicting
-Conflicts:  %{name}-libs
-
+Obsoletes: %{name}-libs < %{version}-%{release}
+Provides: %{name}-libs = %{version}-%{release}
 
 %description
 WiringPi is a PIN based GPIO access library for the BCM2835, BCM2836 and
@@ -128,6 +128,10 @@ done
 
 
 %changelog
+* Mon Sep 02 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 2.46-5
+- Replace Conflicts with Obsoletes/Provides
+- Add armv7hnl to ExclusiveArch
+
 * Sat Nov 10 2018 Andrew Bauer <zonexpertconsulting@outlook.com> - 2.46-4
 - Refactor for RPM Fusion
 - See RFBZ 5079
