@@ -6,17 +6,24 @@
 
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 1%{?shortcommit:.git.%{shortcommit}}%{?dist}
+Release: 2%{?shortcommit:.git.%{shortcommit}}%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
 License: BSD
 Url: https://github.com/iancmcc/ouimeaux
 Source0: https://github.com/iancmcc/%{srcname}/archive/%{commit}.tar.gz#/%{name}-%{shortcommit}.tar.gz
+Source1: README.firewall
+Source2: ouimeaux.xml
+
+Requires: firewalld-filesystem
+Requires(post): firewalld-filesystem
 
 BuildArch: noarch
 BuildRequires: python3-devel
 BuildRequires: findutils
 BuildRequires: sed
+BuildRequires: coreutils
+BuildRequires: firewalld-filesystem
 
 # Required for check
 BuildRequires: %{py3_dist gevent} >= 1.3
@@ -46,6 +53,12 @@ Summary:        %{summary}
 %prep
 %autosetup -n %{srcname}-%{commit}
 
+install -pm 0644 %{SOURCE1} .
+
+# Dont build examples, add to docs instead
+mv ouimeaux/examples examples
+rm examples/__init__.py
+
 # Remove python shebang from __init__.py and make the version match the actual release version
 sed -i -e '/^#!\//, 1d' ouimeaux/__init__.py
 sed -i 's|[0-9]\.[0-9]\.[0-9]|%{version}|' ouimeaux/__init__.py
@@ -59,17 +72,29 @@ find \( -name device.py -or -name service.py -or -name watch.py \) -type f -exec
 %install
 %py3_install
 
+# Install firewalld config
+mkdir -p %{buildroot}%{_prefix}/lib/firewalld/services
+install -pm 0644 %{SOURCE2} %{buildroot}%{_prefix}/lib/firewalld/services/
+
+%post
+%{?firewalld_reload}
+
 %check
 %{python3} setup.py test
 
 %files -n python3-%{srcname}
 %license LICENSE
-%doc README.md HISTORY.rst AUTHORS.rst CONTRIBUTING.rst
+%doc README.md HISTORY.rst AUTHORS.rst CONTRIBUTING.rst README.firewall examples/
 %{python3_sitelib}/%{srcname}-*.egg-info/
 %{python3_sitelib}/%{srcname}/
 %{_bindir}/wemo
+%{_prefix}/lib/firewalld/services/%{srcname}.xml
 
 %changelog
+* Mon May 25 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-2.git.6b6984b
+- Add firewalld config and readme
+- move examples to docs
+
 * Sun May 17 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-1.git.6b6984b
 - Initial package
 
