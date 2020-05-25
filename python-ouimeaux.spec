@@ -4,9 +4,13 @@
 
 %global srcname ouimeaux
 
+# This is the correct folder for firewalld service files, even on x86_64
+# It is not used for shared objects
+%global fw_services %{_prefix}/lib/firewalld/services
+
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 2%{?shortcommit:.git.%{shortcommit}}%{?dist}
+Release: 3%{?shortcommit:.git.%{shortcommit}}%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
 License: BSD
@@ -73,8 +77,8 @@ find \( -name device.py -or -name service.py -or -name watch.py \) -type f -exec
 %py3_install
 
 # Install firewalld config
-mkdir -p %{buildroot}%{_prefix}/lib/firewalld/services
-install -pm 0644 %{SOURCE2} %{buildroot}%{_prefix}/lib/firewalld/services/
+mkdir -p %{buildroot}%{fw_services}
+install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
 
 %post
 %{?firewalld_reload}
@@ -88,9 +92,12 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{_prefix}/lib/firewalld/services/
 %{python3_sitelib}/%{srcname}-*.egg-info/
 %{python3_sitelib}/%{srcname}/
 %{_bindir}/wemo
-%{_prefix}/lib/firewalld/services/%{srcname}.xml
+%{fw_services}/%{srcname}.xml
 
 %changelog
+* Mon May 25 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-3.git.6b6984b
+- Define fw_services macro
+
 * Mon May 25 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-2.git.6b6984b
 - Add firewalld config and readme
 - move examples to docs
