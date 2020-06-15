@@ -1,7 +1,3 @@
-# Author's releases page is not up to date with setup.py, so use git commit
-%global commit 6b6984be27ae7f800417bc7fe68bca38e2b5a9c1
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-
 %global srcname ouimeaux
 
 # This is the correct folder for firewalld service files, even on x86_64
@@ -10,12 +6,12 @@
 
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 3%{?shortcommit:.git.%{shortcommit}}%{?dist}
+Release: 4%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
 License: BSD
 Url: https://github.com/iancmcc/ouimeaux
-Source0: https://github.com/iancmcc/%{srcname}/archive/%{commit}.tar.gz#/%{name}-%{shortcommit}.tar.gz
+Source0: https://github.com/iancmcc/%{srcname}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source1: README.firewall
 Source2: ouimeaux.xml
 
@@ -55,7 +51,7 @@ Summary:        %{summary}
 %description -n python3-%{srcname} %_description
 
 %prep
-%autosetup -n %{srcname}-%{commit}
+%autosetup -n %{srcname}-%{version}
 
 install -pm 0644 %{SOURCE1} .
 
@@ -63,9 +59,8 @@ install -pm 0644 %{SOURCE1} .
 mv ouimeaux/examples examples
 rm examples/__init__.py
 
-# Remove python shebang from __init__.py and make the version match the actual release version
+# Remove python shebang from __init__.py
 sed -i -e '/^#!\//, 1d' ouimeaux/__init__.py
-sed -i 's|[0-9]\.[0-9]\.[0-9]|%{version}|' ouimeaux/__init__.py
 
 # fix python shebang and non-executable-script errors
 find \( -name device.py -or -name service.py -or -name watch.py \) -type f -exec chmod +x {} \; -exec sed -i 's\^#!/usr/bin/env python$\#!%{python3}\' {} \;
@@ -95,6 +90,9 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
 %{fw_services}/%{srcname}.xml
 
 %changelog
+* Mon Jun 15 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-4
+- Author updated releases page to match version in source, dropping git commit
+
 * Mon May 25 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-3.git.6b6984b
 - Define fw_services macro
 
