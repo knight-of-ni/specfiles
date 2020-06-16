@@ -6,17 +6,17 @@
 
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
-License: BSD
+License: BSD and ASL 2.0
 Url: https://github.com/iancmcc/ouimeaux
 Source0: https://github.com/iancmcc/%{srcname}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source1: README.firewall
 Source2: ouimeaux.xml
 
-Requires: firewalld-filesystem
-Requires(post): firewalld-filesystem
+# https://patch-diff.githubusercontent.com/raw/iancmcc/ouimeaux/pull/204.patch
+Patch0:  python-ouimeaux-cElementTree.patch
 
 BuildArch: noarch
 BuildRequires: python3-devel
@@ -45,13 +45,18 @@ Open source control for Belkin WeMo devices
 %description %_description
 
 %package -n python3-%{srcname}
+Requires: firewalld-filesystem
+Requires: webfts
+Requires: js-jquery1
+Requires(post): firewalld-filesystem
+
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{srcname}}
 
 %description -n python3-%{srcname} %_description
 
 %prep
-%autosetup -n %{srcname}-%{version}
+%autosetup -p 1 -n %{srcname}-%{version}
 
 install -pm 0644 %{SOURCE1} .
 
@@ -70,6 +75,15 @@ find \( -name device.py -or -name service.py -or -name watch.py \) -type f -exec
 
 %install
 %py3_install
+
+# replace glyphicons-halflings with links to the packaged file with the same name
+for ftype in woff ttf svg eot; do
+  ln -sf /var/www/webfts/fonts/glyphicons-halflings-regular.$ftype %{buildroot}%{python3_sitelib}/%{srcname}/server/static/fonts/glyphicons-halflings-regular.$ftype
+done
+
+# replace jquery with links to the packaged files with the same name
+ln -sf /usr/share/javascript/jquery/1.12.4/jquery.js %{buildroot}%{python3_sitelib}/%{srcname}/server/static/lib/jquery/jquery.js
+ln -sf /usr/share/javascript/jquery/1.12.4/jquery.min.js %{buildroot}%{python3_sitelib}/%{srcname}/server/static/lib/jquery/jquery.min.js
 
 # Install firewalld config
 mkdir -p %{buildroot}%{fw_services}
@@ -90,6 +104,13 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
 %{fw_services}/%{srcname}.xml
 
 %changelog
+* Tue Jun 16 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-5
+- patch for python 3.9 compatbility
+- move runtime requirements into subpackage
+- unbundle glyphicons-halflings
+- bootstrap java files are ASL 2.0 license
+- unbundle jquery
+
 * Mon Jun 15 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-4
 - Author updated releases page to match version in source, dropping git commit
 
