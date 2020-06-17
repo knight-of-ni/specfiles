@@ -9,6 +9,9 @@ License: BSD
 Url: https://pypi.org/project/pysignals/
 Source0: %pypi_source
 
+# https://github.com/knight-of-ni/PySignals/commit/5912d4ecdc9d8cedb4e813dacc6fa5b22f01cf5c.patch
+Patch0:  python-pysignals-py3compat.patch
+
 BuildArch: noarch
 
 BuildRequires:  python3-devel
@@ -41,11 +44,11 @@ Summary:        %{summary}
 %{python3} setup.py test
 
 %files -n python3-%{srcname}
-%license LICENSE.txt
-%doc README.rst
+%doc PKG-INFO
 %{python3_sitelib}/%{srcname}-*.egg-info/
 %{python3_sitelib}/%{srcname}/
 
+%changelog
 * Wed Jun 17 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.1.2-1
 - Initial package
 
