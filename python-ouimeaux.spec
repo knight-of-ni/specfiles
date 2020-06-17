@@ -6,7 +6,7 @@
 
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
 License: BSD and ASL 2.0
@@ -17,6 +17,8 @@ Source2: ouimeaux.xml
 
 # https://patch-diff.githubusercontent.com/raw/iancmcc/ouimeaux/pull/204.patch
 Patch0:  python-ouimeaux-cElementTree.patch
+# https://github.com/knight-of-ni/ouimeaux/commit/2cea05f127499f42179b3699866b8e1444761b9f.patch
+Patch1:  python-ouimeaux-unbundle-pysignals.patch
 
 BuildArch: noarch
 BuildRequires: python3-devel
@@ -31,6 +33,7 @@ BuildRequires: %{py3_dist requests} >= 2.3.0
 BuildRequires: %{py3_dist pyyaml}
 BuildRequires: %{py3_dist six}
 BuildRequires: %{py3_dist future}
+BuildRequires: %{py3_dist pysignals}
 
 %global _description %{expand:
 Open source control for Belkin WeMo devices
@@ -48,6 +51,7 @@ Open source control for Belkin WeMo devices
 Requires: firewalld-filesystem
 Requires: webfts
 Requires: js-jquery1
+Requires: %{py3_dist pysignals}
 Requires(post): firewalld-filesystem
 
 Summary:        %{summary}
@@ -104,6 +108,9 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
 %{fw_services}/%{srcname}.xml
 
 %changelog
+* Wed Jun 17 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-6
+- unbundle pysignals into separate pacakge
+
 * Tue Jun 16 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-5
 - patch for python 3.9 compatbility
 - move runtime requirements into subpackage
