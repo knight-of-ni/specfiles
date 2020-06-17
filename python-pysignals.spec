@@ -19,12 +19,14 @@ in the Django framework so it can be used in applications without requiring
 the entire Django framework to be installed.
 }
 
+%description %_description
+
 %package -n python3-%{srcname}
 
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{srcname}}
 
-%description %_description
+%description -n python3-%{srcname} %_description
 
 %prep
 %autosetup -p 1 -n %{srcname}-%{version}
