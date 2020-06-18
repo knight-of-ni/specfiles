@@ -6,7 +6,7 @@
 
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
 License: BSD and ASL 2.0
@@ -19,6 +19,9 @@ Source2: ouimeaux.xml
 Patch0:  python-ouimeaux-cElementTree.patch
 # https://github.com/knight-of-ni/ouimeaux/commit/2cea05f127499f42179b3699866b8e1444761b9f.patch
 Patch1:  python-ouimeaux-unbundle-pysignals.patch
+
+# https://github.com/iancmcc/ouimeaux/commit/607bfb3627c32937ca7e542e462053bbb124ee06.patch
+Patch2:  python-ouimeaux-move-statechange.patch
 
 BuildArch: noarch
 BuildRequires: python3-devel
@@ -108,6 +111,9 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
 %{fw_services}/%{srcname}.xml
 
 %changelog
+* Wed Jun 17 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-7
+- unbundle statechange class from pysignals
+
 * Wed Jun 17 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-6
 - unbundle pysignals into separate pacakge
 
