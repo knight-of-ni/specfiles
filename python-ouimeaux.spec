@@ -6,10 +6,10 @@
 
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 7%{?dist}
+Release: 9%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
-License: BSD and ASL 2.0
+License: BSD and ASL 2.0 and MIT
 Url: https://github.com/iancmcc/ouimeaux
 Source0: https://github.com/iancmcc/%{srcname}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source1: README.firewall
@@ -22,6 +22,9 @@ Patch1:  python-ouimeaux-unbundle-pysignals.patch
 
 # https://github.com/iancmcc/ouimeaux/commit/607bfb3627c32937ca7e542e462053bbb124ee06.patch
 Patch2:  python-ouimeaux-move-statechange.patch
+
+# https://github.com/iancmcc/ouimeaux/commit/531c9d2c12d11ddaa6a5eaf2f87d5afc386f1d9a.patch
+Patch3: python-ouimeaux-jquery.patch
 
 BuildArch: noarch
 BuildRequires: python3-devel
@@ -53,7 +56,6 @@ Open source control for Belkin WeMo devices
 %package -n python3-%{srcname}
 Requires: firewalld-filesystem
 Requires: webfts
-Requires: js-jquery1
 Requires: %{py3_dist pysignals}
 Requires(post): firewalld-filesystem
 
@@ -88,10 +90,6 @@ for ftype in woff ttf svg eot; do
   ln -sf /var/www/webfts/fonts/glyphicons-halflings-regular.$ftype %{buildroot}%{python3_sitelib}/%{srcname}/server/static/fonts/glyphicons-halflings-regular.$ftype
 done
 
-# replace jquery with links to the packaged files with the same name
-ln -sf /usr/share/javascript/jquery/1.12.4/jquery.js %{buildroot}%{python3_sitelib}/%{srcname}/server/static/lib/jquery/jquery.js
-ln -sf /usr/share/javascript/jquery/1.12.4/jquery.min.js %{buildroot}%{python3_sitelib}/%{srcname}/server/static/lib/jquery/jquery.min.js
-
 # Install firewalld config
 mkdir -p %{buildroot}%{fw_services}
 install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
@@ -111,6 +109,12 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
 %{fw_services}/%{srcname}.xml
 
 %changelog
+* Mon Jun 22 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-9
+- Patch3 was missing in last build
+
+* Mon Jun 22 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-8
+- rebundle jquery and update to latest 1.12.x
+
 * Wed Jun 17 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-7
 - unbundle statechange class from pysignals
 
