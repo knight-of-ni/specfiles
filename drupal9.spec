@@ -22,7 +22,8 @@ BuildArch: noarch
 BuildRequires:  coreutils
 BuildRequires:  findutils
 BuildRequires:  sed
-BuildRequires: php-cli
+BuildRequires:  grep
+BuildRequires:  php-cli
 
 # A basic set of runtime requirements which may not be complete
 Requires:  php-common >= %{php_min_ver}
@@ -66,6 +67,7 @@ cp -p %{SOURCE1} .rpm/
 
 # Remove unneeded files
 rm -rf vendor core/vendor
+rm -f core/composer.json
 find . -name '.git*' -delete -print
 find . -name 'web.config' -delete -print
 
@@ -130,7 +132,7 @@ ln -s %{_sysconfdir}/%{name}/robots.txt %{buildroot}%{_datadir}/drupal9/robots.t
 '
 
 # Ensure php bin updated
-grep -r '#!/bin/php' . && exit 1
+! grep -r '#!/bin/php' .
 
 %if %{with_tests}
 pushd core
