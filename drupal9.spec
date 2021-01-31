@@ -76,9 +76,11 @@ Requires:  php-reflection
 Requires:  php-zip
 Requires:  php-zlib
 
+%if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
 # Weak dependencies
 Suggests:  php-pecl(apcu)
 Suggests:  php-pecl(yaml)
+%endif
 
 ## Core
 Provides:  drupal9(core) = %{version}
