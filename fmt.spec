@@ -1,7 +1,14 @@
 %bcond_with doc
+
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%global ctestbin ctest3
+%else
+%global ctestbin ctest
+%endif
+
 Name:           fmt
 Version:        6.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Small, safe and fast formatting library for C++
 
 License:        BSD
@@ -97,7 +104,7 @@ rm -rf ../build/doc/html/{.buildinfo,.doctrees,objects.inv}
 
 %check
 pushd build
-ctest -VV %{?_smp_mflags}
+%{ctestbin} -VV %{?_smp_mflags}
 popd
 
 %files
@@ -118,6 +125,9 @@ popd
 %endif
 
 %changelog
+* Sun Feb 07 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 6.2.1-2
+- define global ctest bin for el7 compat
+
 * Sat May 09 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 6.2.1-1
 - Updated to version 6.2.1.
 
