@@ -1,8 +1,16 @@
+# el7 needs cmake3 package and macros
+%if 0%{?el7}
+%global with_cmake3 1
+%global cmake %cmake3
+%global cmake_build %cmake3_build
+%global cmake_install %cmake3_install
+%global ctest %ctest3
+%endif
 
 Name:    websocketpp
 Summary: C++ WebSocket Protocol Library
 Version: 0.8.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 
 License: BSD
 Url:     https://www.zaphoyd.com/websocketpp
@@ -24,9 +32,9 @@ Patch2: websocketpp-0.8.1-cmake-configversion-compatibility-anynewerversion.patc
 # Disable the following tests, which fail occasionally: test_transport, test_transport_asio_timers
 Patch3: websocketpp-0.7.0-disable-test_transport-test_transport_asio_timers.patch
 
-
+%{?with_cmake3:BuildRequires:  cmake3}
+%{!?with_cmake3:BuildRequires:  cmake}
 BuildRequires:  boost-devel
-BuildRequires:  cmake
 BuildRequires:  gcc-c++
 # needed for tests mostly
 BuildRequires:  pkgconfig(openssl)
@@ -82,6 +90,9 @@ rm -rfv %{buildroot}%{_includedir}/test_connection/
 
 
 %changelog
+* Mon Feb 08 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-5
+- Use cmake3 package and macros for el7 compat
+
 * Mon Aug 03 2020 Wolfgang Stöggl <c72578@yahoo.de> - 0.8.2-4
 - Use %%cmake_build and %%cmake_install macros to fix FTBFS
 
