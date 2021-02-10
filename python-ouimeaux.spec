@@ -6,7 +6,7 @@
 
 Name: python-%{srcname}
 Version: 0.8.2
-Release: 9%{?dist}
+Release: 13%{?dist}
 Summary: Open source control for Belkin WeMo devices
 
 License: BSD and ASL 2.0 and MIT
@@ -25,6 +25,9 @@ Patch2:  python-ouimeaux-move-statechange.patch
 
 # https://github.com/iancmcc/ouimeaux/commit/531c9d2c12d11ddaa6a5eaf2f87d5afc386f1d9a.patch
 Patch3: python-ouimeaux-jquery.patch
+
+# https://github.com/iancmcc/ouimeaux/commit/40cdcf352cc883bfc815c1a7a15aeb5520a63aaa.patch
+Patch4: python-ouimeaux-getchildren.patch
 
 BuildArch: noarch
 BuildRequires: python3-devel
@@ -55,7 +58,7 @@ Open source control for Belkin WeMo devices
 
 %package -n python3-%{srcname}
 Requires: firewalld-filesystem
-Requires: webfts
+Requires: glyphicons-halflings-fonts
 Requires: %{py3_dist pysignals}
 Requires(post): firewalld-filesystem
 
@@ -85,10 +88,11 @@ find \( -name device.py -or -name service.py -or -name watch.py \) -type f -exec
 %install
 %py3_install
 
-# replace glyphicons-halflings with links to the packaged file with the same name
+# remove non-ttf fonts and link the ttf font to the packaged file with the same name
 for ftype in woff ttf svg eot; do
-  ln -sf /var/www/webfts/fonts/glyphicons-halflings-regular.$ftype %{buildroot}%{python3_sitelib}/%{srcname}/server/static/fonts/glyphicons-halflings-regular.$ftype
+  rm -f /var/www/webfts/fonts/glyphicons-halflings-regular.$ftype
 done
+ln -sf /var/www/webfts/fonts/glyphicons-halflings-regular.ttf %{buildroot}%{python3_sitelib}/%{srcname}/server/static/fonts/glyphicons-halflings-regular.ttf
 
 # Install firewalld config
 mkdir -p %{buildroot}%{fw_services}
@@ -109,6 +113,19 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{fw_services}/
 %{fw_services}/%{srcname}.xml
 
 %changelog
+* Wed Feb 10 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-13
+- replace webfts runtime requirement with glyphicons-halflings-fonts
+- remove all non-ttf glyphicons fonts from package
+
+* Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.8.2-12
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
+* Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 0.8.2-11
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Sun Jul 05 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-10
+- ElementTree getchildren method deprecated. Use list instead.
+
 * Mon Jun 22 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 0.8.2-9
 - Patch3 was missing in last build
 
