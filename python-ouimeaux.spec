@@ -89,10 +89,8 @@ find \( -name device.py -or -name service.py -or -name watch.py \) -type f -exec
 %py3_install
 
 # remove non-ttf fonts and link the ttf font to the packaged file with the same name
-for ftype in woff ttf svg eot; do
-  rm -f /var/www/webfts/fonts/glyphicons-halflings-regular.$ftype
-done
-ln -sf /var/www/webfts/fonts/glyphicons-halflings-regular.ttf %{buildroot}%{python3_sitelib}/%{srcname}/server/static/fonts/glyphicons-halflings-regular.ttf
+rm -f %{buildroot}%{python3_sitelib}/%{srcname}/server/static/fonts/glyphicons-halflings-regular.*
+ln -sf /usr/share/fonts/glyphicons-halflings/glyphicons-halflings-regular.ttf %{buildroot}%{python3_sitelib}/%{srcname}/server/static/fonts/glyphicons-halflings-regular.ttf
 
 # Install firewalld config
 mkdir -p %{buildroot}%{fw_services}
