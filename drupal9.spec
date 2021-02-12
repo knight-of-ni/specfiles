@@ -1,6 +1,11 @@
-# IMPORTANT
-# This is simplified drupal9 specfile, which does not use php composer or symfony as they are not available in all epel repos
-# Portions of this specfile borrowed from the Drupal 8 specfile written by Shawn Iwinski <shawn@iwin.ski>
+# This specfile is based off the drupal 8 specfile in the fedora repos, written by Shawn Iwinski <shawn@iwin.ski>
+# It does not use php composer or symfony, as they are not available in all epel repos
+#
+# As a result, the ability to automatically add php dependencies upon plugin installation is not present.
+# This will have to be done mnually by the system administrator
+#
+# In addition, this package does not insert or manage apache config files under conf.d folder.
+# Instead, the sys admin must add the appropriate configuration for the target system.
 
 # Build using "--with tests" to enable tests
 %global with_tests 0%{?_with_tests:1}
@@ -13,7 +18,7 @@ AutoReqProv: no
 
 Name:      drupal9
 Version:   9.1.3
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   An open source content management platform
 License:   GPLv2+
 URL:       https://www.drupal.org/9
@@ -31,7 +36,6 @@ BuildRequires:  php-cli
 # A basic set of runtime requirements which may not be complete
 Requires:  php-cli
 Requires:  php(language) >= %{php_min_ver}
-Requires:  php-fpm
 Requires:  php-gd
 Requires:  php-mysqlnd
 Requires:  php-mbstring
@@ -741,11 +745,10 @@ popd
 %license .rpm/licenses/*
 %doc .rpm/docs/*
 %config(noreplace) %{_sysconfdir}/%{name}/robots.txt
-%ghost %{_datadir}/drupal9/sites/default/settings.php
+%ghost %{_sysconfdir}/%{name}/sites/default/settings.php
 
 %{_datadir}/drupal9/
 %dir %{_sysconfdir}/%{name}
-%dir %{_sysconfdir}/%{name}/sites
 %config(noreplace) %{_sysconfdir}/%{name}/sites/development.services.yml
 %dir %{_sysconfdir}/%{name}/sites/default
 ## Managed upstream example/default configs
@@ -759,6 +762,295 @@ popd
 %dir %{_localstatedir}/lib/%{name}/files/public
 
 %changelog
-* Sat Jan 30 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 9.1.3-1
-- Initial specfile for drupal 9
+* Sat Jan 30 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 9.1.3-2
+- fix cpio unpacking error during package install
+- remove php-fpm as a runtime requirement
 
+* Sat Jan 30 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 9.1.3-1
+- remove composer and symfony dependencies
+- remove httpd config file management
+- make robots.txt a config file under sysconfig folder
+- remove subpackages
+
+* Sun Dec 06 2020 Shawn Iwinski <shawn@iwin.ski> - 8.9.11-1
+- Update to 8.9.11 (RHBZ #1879681)
+- https://www.drupal.org/sa-core-2020-007 (CVE-2020-13666)
+- https://www.drupal.org/sa-core-2020-008 (CVE-2020-13667)
+- https://www.drupal.org/sa-core-2020-009 (CVE-2020-13668)
+- https://www.drupal.org/sa-core-2020-010 (CVE-2020-13669)
+- https://www.drupal.org/sa-core-2020-011 (CVE-2020-13670)
+- https://www.drupal.org/sa-core-2020-012 (CVE-2020-13671 / RHBZ #1900796)
+- https://www.drupal.org/sa-core-2020-013 (CVE-2020-28948 / CVE-2020-28949)
+- License updated from "GPLv2+ and MIT and Public Domain and (GPLv2+ or MPLv1.1+ or LGPLv2+)"
+  to "GPLv2+ and MIT and Public Domain and (GPLv2+ or MPLv1.1 or LGPLv2+)"
+
+* Fri Sep 04 2020 Shawn Iwinski <shawn@iwin.ski> - 8.9.5-1
+- Update to 8.9.5 (RHBZ #1848156)
+
+* Mon Jul 27 2020 Fedora Release Engineering <releng@fedoraproject.org> - 8.9.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Sat Jun 06 2020 Shawn Iwinski <shawn@iwin.ski> - 8.9.0-1
+- Update to 8.9.0
+- https://www.drupal.org/sa-core-2020-002 / CVE-2020-11022 / CVE-2020-11023
+- Fix FTI by removing php-recode dependency (RHBZ #1832048, 1833939)
+
+* Sun Apr 05 2020 Shawn Iwinski <shawn@iwin.ski> - 8.8.5-1
+- Update to 8.8.5 (RHBZ #1817768)
+
+* Mon Mar 23 2020 Shawn Iwinski <shawn@iwin.ski> - 8.8.4-1
+- Update to 8.8.4 (RHBZ #1705226)
+
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 8.6.17-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 8.6.17-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Mon Jun 17 2019 Shawn Iwinski <shawn@iwin.ski> - 8.6.17-1
+- Update to 8.6.17
+
+* Fri May 10 2019 Shawn Iwinski <shawn@iwin.ski> - 8.6.16-1
+- Update to 8.6.16
+- https://www.drupal.org/SA-CORE-2019-007
+
+* Mon Apr 29 2019 Shawn Iwinski <shawn@iwin.ski> - 8.6.15-1
+- Update to 8.6.15 (RHBZ #1697173)
+- https://www.drupal.org/SA-CORE-2019-005 (CVE-2019-10909 / CVE-2019-10910 / CVE-2019-10911)
+- https://www.drupal.org/SA-CORE-2019-006 (CVE-2019-11358)
+
+* Wed Mar 20 2019 Shawn Iwinski <shawn@iwin.ski> - 8.6.13-1
+- Update to 8.6.13 (RHBZ #1688520)
+- https://www.drupal.org/SA-CORE-2019-004
+
+* Tue Feb 26 2019 Shawn Iwinski <shawn@iwin.ski> - 8.6.10-1
+- Update to 8.6.10 (RHBZ #1673117)
+- https://www.drupal.org/SA-CORE-2019-001
+- https://www.drupal.org/SA-CORE-2019-002
+- https://www.drupal.org/SA-CORE-2019-003
+- Fix autoloader (RHBZ #1662604)
+
+* Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 8.6.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Sat Oct 27 2018 Shawn Iwinski <shawn@iwin.ski> - 8.6.2-1
+- Update to 8.6.2 (RHBZ #1498687 / RHBZ #1643121 / RHBZ #1643123 / SA-CORE-2018-006)
+
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 8.4.8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Wed Apr 25 2018 Shawn Iwinski <shawn@iwin.ski> - 8.4.8-1
+- Update to 8.4.8 (RHBZ #1572099 / RHBZ #1572101 / SA-CORE-2018-004 /
+  CVE-2018-7602 / SA-CORE-2018-003 / CVE-2018-9861)
+- Add composer.json files to repo
+- Fix "rpmbuild" subpackage by adding range version dependencies for
+  Fedora >= 27 || RHEL >= 8
+
+* Mon Apr 09 2018 Shawn Iwinski <shawn@iwin.ski> - 8.4.6-3
+- Add range version dependencies for Fedora >= 27 || RHEL >= 8
+- Add php-composer(symfony/config) dependency
+
+* Sat Mar 31 2018 Shawn Iwinski <shawn@iwin.ski> - 8.4.6-2
+- Fix autoload of symfony/psr-http-message-bridge and symfony-cmf/routing
+- Add conflict when Twig v2 is installed
+
+* Wed Mar 28 2018 Shawn Iwinski <shawn@iwin.ski> - 8.4.6-1
+- Update to 8.4.6 (SA-CORE-2018-002 / CVE-2018-7600)
+- Make scripts' dependencies match Drupal Symfony version constraints
+
+* Wed Mar 14 2018 Shawn Iwinski <shawn@iwin.ski> - 8.4.5-1
+- Update to 8.4.5 (RHBZ #1548187 / RHBZ #1548188 / RHBZ #1548189 /
+  RHBZ #1548192 / RHBZ #1548323 / RHBZ #1548325 / SA-CORE-2018-001 /
+  CVE-2017-6926 / CVE-2017-6927 / CVE-2017-6930 / CVE-2017-6931)
+
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 8.3.7-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Thu Aug 17 2017 Shawn Iwinski <shawn@iwin.ski> - 8.3.7-1
+- Update to 8.3.7 (RHBZ #1482277 / SA-CORE-2017-004 / CVE-2017-6923 /
+  CVE-2017-6924 / CVE-2017-6925)
+
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 8.3.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Fri Jul 07 2017 Shawn Iwinski <shawn@iwin.ski> - 8.3.5-1
+- Update to 8.3.5 (RHBZ #1468059)
+
+* Thu Jun 22 2017 Shawn Iwinski <shawn@iwin.ski> - 8.3.4-1
+- Update to 8.3.4 (RHBZ #1459711 / SA-CORE-2017-003 / CVE-2017-6920 /
+  CVE-2017-6921 / CVE-2017-6922)
+
+* Thu May 11 2017 Shawn Iwinski <shawn@iwin.ski> - 8.3.2-1
+- Update to 8.3.2 (RHBZ #1447814)
+- Add conflict: php-composer(drush/drush) < 8.1.10
+
+* Thu Apr 20 2017 Shawn Iwinski <shawn@iwin.ski> - 8.3.1-1
+- Update to 8.3.1 (SA-CORE-2017-002, RHBZ #1443782)
+
+* Sat Apr 15 2017 Shawn Iwinski <shawn@iwin.ski> - 8.3.0-1
+- Update to 8.3.0 (RHBZ #1439698)
+- Update php-composer(*) Drupal-provides to php-composer(packages.drupal.org/*)
+- Change Drupal-requires from drupal9(*) to php-composer(packages.drupal.org/*)
+
+* Wed Mar 15 2017 Shawn Iwinski <shawn@iwin.ski> - 8.2.7-1
+- Update to 8.2.7 (SA-CORE-2017-001)
+
+* Tue Feb 28 2017 Shawn Iwinski <shawn@iwin.ski> - 8.2.6-1
+- Update to 8.2.6 (RHBZ #1418483)
+
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 8.2.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Wed Jan 11 2017 Shawn Iwinski <shawn@iwin.ski> - 8.2.5-1
+- Update to 8.2.5 (RHBZ #1410077)
+
+* Mon Dec 26 2016 Shawn Iwinski <shawn@iwin.ski> - 8.2.4-2
+- Add missing php-composer(asm89/stack-cors) dependency (RHBZ #1408675)
+
+* Sun Dec 11 2016 Shawn Iwinski <shawn@iwin.ski> - 8.2.4-1
+- Update to 8.2.4 (RHBZ #1402613)
+
+* Thu Nov 17 2016 Shawn Iwinski <shawn@iwin.ski> - 8.2.3-1
+- Update to 8.2.3 (RHBZ #1395919 / SA-CORE-2016-005)
+- Update %%__drupal8_path (RPM fileattrs) to only include drupal8* doc paths
+
+* Thu Nov 03 2016 Shawn Iwinski <shawn@iwin.ski> - 8.2.2-2
+- Add RPM README
+- Rename HTTPD config file "drupal8.no-access" to "drupal8.deny-access"
+
+* Thu Nov 03 2016 Shawn Iwinski <shawn@iwin.ski> - 8.2.2-1
+- Update to 8.2.2 (RHBZ #1383483)
+- Update license from "GPLv2+ and MIT and Public Domain and (GPLv2+ or MPLv1.1+ or LGPLv2.1+)"
+  to "GPLv2+ and MIT and Public Domain and (GPLv2+ or MPLv1.1+ or LGPLv2+)"
+
+* Fri Aug 05 2016 Shawn Iwinski <shawn@iwin.ski> - 8.1.8-2
+- Update license from "GPLv2+ or MPLv1.1+ or LGPLv2.1+" to
+  "GPLv2+ and MIT and Public Domain and (GPLv2+ or MPLv1.1+ or LGPLv2.1+)"
+- Add LICENSE file to rpmbuild subpackage
+- Add missing "php-cli" dependency (for "/usr/bin/env php" usage)
+- Move license and doc files required at runtime back in place
+- Remove all empty license and doc files
+- Add header to managed httpd conf files
+
+* Thu Aug 04 2016 Shawn Iwinski <shawn@iwin.ski> - 8.1.8-1
+- Update to 8.1.8
+- Fix drupal9(*) virtual provides:
+-- drupal9(drupal/*) => drupal9(*)
+-- Only *.info.yml (instead of all composer names)
+
+* Mon Jul 18 2016 Shawn Iwinski <shawn@iwin.ski> - 8.1.7-1
+- Update to 8.1.7
+
+* Wed Jul 13 2016 Shawn Iwinski <shawn@iwin.ski> - 8.1.6-1
+- Update to 8.1.6
+- Rewrite top-level autoload.php instead of modifying core's composer.json
+- Fix drupal9-get-dev-source.sh she-bang
+- No "rpm" subdirectory for %%drupal8_{modules,profiles,themes} macros
+- Include main .htaccess in httpd conf instead of soft-linking
+- Apache conf for no access
+- %%files %%config updates
+- httpd subpackage now owns %%{drupal9_var}/files/{public,private}/default
+  because of %%attr
+
+* Thu Mar 10 2016 Shawn Iwinski <shawn@iwin.ski> - 8.0.5-1
+- Update to 8.0.5
+
+* Sun Jan 31 2016 Shawn Iwinski <shawn@iwin.ski> - 8.0.2-3
+- Fix build requires and %%check in clean buildroot
+
+* Sun Jan 31 2016 Shawn Iwinski <shawn@iwin.ski> - 8.0.2-2
+- Fix typo in drupal9-prep-licenses-and-docs.sh
+- Fix finding of composer.json files in drupal8.attr
+- Update automatic provides and requires for single file input and
+  ignore directories
+- Remove "--spec-name" option from automatic requires
+- Fix automatic provides version when version = 0
+- %%{name}-prep-licenses-and-docs.sh usage in %%prep
+
+* Tue Jan 26 2016 Shawn Iwinski <shawn@iwin.ski> - 8.0.2-1
+- Updated to 8.0.2
+- Main package license changed from "GPLv2+" to "GPLv2+ and MIT and Public Domain"
+- "rpmbuild" sub-package "MIT" license added
+- Dynamic %%doc and %%license
+- Modified drupal9(*) virtual provides
+- Added php-composer(*) virtual provides
+- Added custom autoloader (and removed Composer autoload modifications)
+- Added "drupal8_var" and "drupal8_conf" macros
+- "%%{_sysconfdir}/%%{name}/*" => "%%{_sysconfdir}/%%{name}/sites/*"
+- "%%{_localstatedir}/lib/%%{name}/*" => "%%{_localstatedir}/lib/%%{name}/files/*"
+- Separation of HTTPD web server configs into sub-package (%%{name}-httpd)
+- Added version check in %%check
+- Removed filesystem modifications in %%check
+
+* Sat Oct 10 2015 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0.0-0.14.rc1
+- Updated to 8.0.0-rc1
+
+* Sat Nov 22 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0.0-0.13.beta3
+- Updated to 8.0.0-beta3
+
+* Wed Jul 02 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.12.alpha13
+- Updated to 8.0-alpha13
+
+* Sun Jun 29 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.11.alpha12
+- Updated to 8.0-alpha12
+
+* Fri May 23 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.10.alpha11
+- Updated to 8.0-alpha11
+- Many more changes...
+
+* Sun Jan 12 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.9.alpha7
+- Updated to release tag 8.0-alpha7
+- Updated URL
+- Moved .htaccess file to Apache conf dir
+- Fixed Apache conf file
+- Removed PSR Log dependency (dependencies pull this in)
+- Unbundle EasyRDF, Gliph, Symfony, Zend Framework 2 Feed
+- Added specific file requires to make sure broken dependency if providing
+  pkg moves file
+- Keep modules, profiles, and themes README files in directories
+- Unbundling now uses autoloader instead of symlinks
+
+* Wed Oct 23 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.8.alpha4
+- Updated to release tag 8.0-alpha4
+- Require correct min PHP version 5.3.10 instead of 5.3.3
+- Require correct min/max pkg versions
+- Use bundled Doctrine, EasyRdf, Symfony, Symfony CMF Routing, and Twig
+  because required versions are not available in Fedora
+- Updated phpcompatinfo requires:
+  Added: openssl, tokenizer
+  Removed: bcmath, gmp
+
+* Sun Jun 16 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.7.20130616git1648a47
+- Updated to 2013-06-16 snapshot
+- No auto-provide hidden projects
+- Static virtual provides instead of dynamic
+
+* Wed Jun 12 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.6.20130612gite952a21
+- Updated to 2013-06-12 snapshot
+
+* Sun May 05 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.5.20130504git5838ea9
+- Updated to 2013-05-04 snapshot
+
+* Thu Apr 04 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.4.20130403giteebd063
+- Updated to 2013-04-03 snapshot
+- Updated note about PHP minimum version
+- Added php-Assetic and php-SymfonyCmfRouting requires
+- Removed vendors (bundled libraries) phpci requires
+- Updated composer file locations
+
+* Thu Mar 21 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.3.20130309git3210003
+- %%{drupal9}/sites => %%{_sysconfdir}/%%{name}
+- Marked Apache config as %%config
+- Marked modules/profiles/themes README.txt as %%doc
+- Specific dir and file ownership
+- Removed example.gitignore
+- Added files dir and symlink
+
+* Sat Mar 09 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.2.20130309git3210003
+- Updated to latest 2013-03-09 snapshot
+- *.info => *.info.yml
+- Added PyYAML require for rpmbuild sub-package
+- Un-bundled PHPUnit
+
+* Mon Feb 25 2013 Shawn Iwinski <shawn.iwinski@gmail.com> - 8.0-0.1.20130224git8afbc08
+- Initial package
