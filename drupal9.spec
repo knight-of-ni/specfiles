@@ -17,8 +17,8 @@
 AutoReqProv: no
 
 Name:      drupal9
-Version:   9.1.3
-Release:   2%{?dist}
+Version:   9.1.4
+Release:   1%{?dist}
 Summary:   An open source content management platform
 License:   GPLv2+
 URL:       https://www.drupal.org/9
@@ -762,7 +762,10 @@ popd
 %dir %{_localstatedir}/lib/%{name}/files/public
 
 %changelog
-* Sat Jan 30 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 9.1.3-2
+* Fri Feb 12 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 9.1.4-1
+- 9.1.4 release
+
+* Thu Feb 11 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 9.1.3-2
 - fix cpio unpacking error during package install
 - remove php-fpm as a runtime requirement
 
