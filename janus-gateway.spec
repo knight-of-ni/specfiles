@@ -98,8 +98,8 @@ fi
 
 %files
 %license COPYING
-%config(noreplace) /etc/janus/*
 %doc README.md SECURITY.md CHANGELOG.md
+%config(noreplace) %{_sysconfdir}/janus/*
 %{_mandir}/man*/*
 %{_bindir}/janus
 %{_bindir}/janus-cfgconv
