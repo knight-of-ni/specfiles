@@ -31,8 +31,8 @@ BuildRequires: libconfig-devel
 BuildRequires: libmicrohttpd-devel >= 0.9.59
 BuildRequires: libnice-devel >= 0.1.14
 BuildRequires: systemd-devel
-BuildRequires:  findutils
-BuildRequires:  coreutils
+BuildRequires: findutils
+BuildRequires: coreutils
 
 %{?systemd_requires}
 Requires: jansson
