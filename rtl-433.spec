@@ -4,7 +4,7 @@
 
 Name: rtl-433
 Version: 21.12
-Release: 1.%{commit_date}git%{commit_short}%{dist}
+Release: 2.%{commit_date}git%{commit_short}%{dist}
 
 Summary: Generic radio data receiver
 License: GPLv2
@@ -16,9 +16,13 @@ BuildRequires: coreutils
 BuildRequires: sed
 BuildRequires: gcc-c++
 BuildRequires: cmake
-BuildRequires: libusb-devel
 BuildRequires: rtl-sdr-devel
 BuildRequires: SoapySDR-devel
+%if 0%{?fedora} > 36
+BuildRequires: libusb-compat-0.1-devel
+%else
+BuildRequires: libusb-devel
+%endif
 
 %description
 rtl_433 (despite the name) is a generic data receiver, mainly
@@ -63,6 +67,9 @@ rm -rf %{buildroot}%{_usr}%{_sysconfdir}
 %{_includedir}/rtl_433*.h
 
 %changelog
+* Fri Apr 08 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 21.12-2.20220401git8228f0d
+- libusb obsoleted by libusb-compat-0.1 on f37 and newer
+
 * Thu Apr 07 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 21.12-1.20220401git8228f0d
 - Initial specfile based on altlinux pkg by Sergey Bolshakov <sbolshakov@altlinux.ru>
 
