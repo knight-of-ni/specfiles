@@ -4,7 +4,7 @@
 
 Name: rtl-433
 Version: 21.12
-Release: 2.%{commit_date}git%{commit_short}%{dist}
+Release: 3.%{commit_date}git%{commit_short}%{dist}
 
 Summary: Generic radio data receiver
 License: GPLv2
@@ -49,8 +49,30 @@ sed -ri 's\^#!/usr/bin/env python3?$\#!%{python3}\' examples/*.py
 
 %install
 %cmake_install
-mkdir -p %{buildroot}%{_sysconfdir}/rtl_433
-cp conf/rtl_433.example.conf %{buildroot}%{_sysconfdir}/rtl_433/rtl_433.conf
+
+# install the example config file into the config folder
+install -Dm 644 conf/rtl_433.example.conf %{buildroot}%{_sysconfdir}/rtl_433/rtl_433.conf
+
+# Commenting these config options made more sensible defaults on my system
+for C in \
+    'pulse_detect squelch' \
+    'pulse_detect magest' \
+    'samples_to_read 0' \
+    'analyze_pulses false' \
+    'device        0' \
+    'pulse_detect autolevel' \
+    'report_meta level' \
+    'report_meta noise' \
+    'report_meta stats' \
+    'report_meta time:usec' \
+    'report_meta protocol' \
+    'signal_grabber none' \
+    'output json' \
+    'convert si' \
+    'stop_after_successful_events false' \
+;do
+    sed -i 's\^'"$C"'$\'#"$C"'\' %{buildroot}%{_sysconfdir}/rtl_433/rtl_433.conf
+done
 
 # example config files will be placed under doc
 rm -rf %{buildroot}%{_usr}%{_sysconfdir}
@@ -58,7 +80,7 @@ rm -rf %{buildroot}%{_usr}%{_sysconfdir}
 %files
 %doc AUTHORS COPYING *.md docs/*.md conf examples
 %dir %{_sysconfdir}/rtl_433
-%config(noreplace) %{_sysconfdir}/rtl_433/*.conf
+%config(noreplace) %{_sysconfdir}/rtl_433/rtl_433.conf
 %{_bindir}/rtl_433
 %{_mandir}/man*/*
 
@@ -67,6 +89,10 @@ rm -rf %{buildroot}%{_usr}%{_sysconfdir}
 %{_includedir}/rtl_433*.h
 
 %changelog
+* Sun Apr 10 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 21.12-3.20220401git8228f0d
+- Comment some of the config options makes for more sensible defaults
+- Use install instead of cp for config file
+
 * Fri Apr 08 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 21.12-2.20220401git8228f0d
 - libusb obsoleted by libusb-compat-0.1 on f37 and newer
 
