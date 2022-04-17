@@ -4,7 +4,7 @@
 
 Name: rtl-433
 Version: 21.12
-Release: 3.%{commit_date}git%{commit_short}%{dist}
+Release: 4.%{commit_date}git%{commit_short}%{dist}
 
 Summary: Generic radio data receiver
 License: GPLv2
@@ -50,6 +50,7 @@ sed -ri 's\^#!/usr/bin/env python3?$\#!%{python3}\' examples/*.py
 %install
 %cmake_install
 
+
 # install the example config file into the config folder
 install -Dm 644 conf/rtl_433.example.conf %{buildroot}%{_sysconfdir}/rtl_433/rtl_433.conf
 
@@ -77,18 +78,26 @@ done
 # example config files will be placed under doc
 rm -rf %{buildroot}%{_usr}%{_sysconfdir}
 
+%check
+%ctest
+
 %files
-%doc AUTHORS COPYING *.md docs/*.md conf examples
+%license COPYING
+%doc AUTHORS *.md docs/*.md conf examples
 %dir %{_sysconfdir}/rtl_433
 %config(noreplace) %{_sysconfdir}/rtl_433/rtl_433.conf
 %{_bindir}/rtl_433
 %{_mandir}/man*/*
 
 %files devel
-%doc AUTHORS COPYING
+%doc AUTHORS
 %{_includedir}/rtl_433*.h
 
 %changelog
+* Sun Apr 17 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 21.12-4.20220401git8228f0d
+- Move COPYING to license
+- Run ctest suite
+
 * Sun Apr 10 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 21.12-3.20220401git8228f0d
 - Comment some of the config options makes for more sensible defaults
 - Use install instead of cp for config file
