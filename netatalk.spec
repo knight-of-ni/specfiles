@@ -1,58 +1,30 @@
-%global _hardened_build   1
-
-%global pkgver $(rpm -qls tracker-devel.%{_target_cpu} | grep sparql | grep pc | cut -d"-" -f3 | cut -d"." -f1-2|sort -u)
-%global with_tracker      1
 %global xslver $(rpm -q --queryformat "%%{VERSION}" docbook-style-xsl)
-%global with_acls         1
-%global with_bdb          1
-%global with_cracklib     1
-%global with_docbook      1
-%global with_dbus         1
-%global with_dtrace       1
-%global with_ldap         1
-%global with_libevent     1
-%global with_mysql        1
-%global with_procpsng     1
-%global with_quota        1
-%global without_openafs   1
 
-# tcp_wrappers deprecated fedora >= 28
-%if 0%{?fedora} >= 28
-%global without_tcp_wrappers 1
-%endif
-
-# rhel need to call ldconfig
-%if 0%{?rhel}
-%global ldconfig /sbin/ldconfig
-%endif
-
-# set path to python binary per fedora packaging guidelines
-%if 0%{?fedora} || 0%{?rhel} >= 8
-%global python_bin /usr/bin/python3
-%else
-%global python_bin /usr/bin/python2
-%endif
+# Netatalk bundles wolfssl with the project to maintain support for Apple DHCAST128
+# Discussion is here:  https://github.com/openssl/openssl/issues/22158
+%global with_wolfssl         1
 
 Name:              netatalk
 Epoch:             5
-Version:           3.1.12
-Release:           4%{?dist}
+Version:           3.2.4
+Release:           1%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
 License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT
 # Project is also mirrored at https://github.com/Netatalk/Netatalk
 URL:               http://netatalk.sourceforge.net
-Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.bz2
+Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.xz
 Source1:           netatalk.pam-system-auth
 Source2:           netatalk.conf
 
-# From http://www003.upp.so-net.ne.jp/hat/files/netatalk-3.1.7-0.1.fc22.src.rpm
-Patch0:            netatalk-3.0.1-basedir.patch
-Patch1:            netatalk-systemd-execstartpre.patch
-# https://github.com/Netatalk/Netatalk/pull/110
-Patch2:            netatalk-fix-incorrect-fsf-address.patch
-# https://github.com/Netatalk/Netatalk/pull/113
-Patch3:            netatalk-afpstats-python3-compat.patch
+# https://github.com/Netatalk/netatalk/issues/1296
+Patch0:            netatalk-wolfssl.patch
 
+# Per i686 leaf package policy 
+# https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
+ExcludeArch: %{ix86}
+
+BuildRequires:     meson
+BuildRequires:     make
 BuildRequires:     rpm
 BuildRequires:     grep
 BuildRequires:     perl-interpreter
@@ -67,36 +39,33 @@ BuildRequires:     flex
 BuildRequires:     libattr-devel
 BuildRequires:     libgcrypt-devel
 BuildRequires:     krb5-devel
-BuildRequires:     openssl-devel
 BuildRequires:     pam-devel
 BuildRequires:     systemd
 BuildRequires:     libtdb-devel
+BuildRequires:     cracklib-devel
+BuildRequires:     libacl-devel
+BuildRequires:     systemtap-sdt-devel
+BuildRequires:     openldap-devel
+BuildRequires:     quota-devel
+BuildRequires:     libdb-devel
+BuildRequires:     tracker3
+BuildRequires:     tracker3-devel
+BuildRequires:     libevent-devel
+BuildRequires:     docbook-style-xsl
+BuildRequires:     libxslt
+BuildRequires:     dbus-devel
+BuildRequires:     dbus-glib-devel
+BuildRequires:     mariadb-connector-c-devel
+BuildRequires:     procps-ng
+BuildRequires:     procps
+%{!?with_wolfssl:BuildRequires:     openssl-devel}
 
-%{?with_cracklib:BuildRequires:     cracklib-devel}
-%{?with_dbus:BuildRequires:     dbus-devel}
-%{?with_dbus:BuildRequires:     dbus-glib-devel}
-%{?with_docbook:BuildRequires:     docbook-style-xsl}
-%{?with_acls:BuildRequires:     libacl-devel}
-%{?with_bdb:BuildRequires:     libdb-devel}
-%{!?with_bdb:BuildRequires:     db4-devel}
-%{?with_libevent:BuildRequires:     libevent-devel}
-%{?with_docbook:BuildRequires:     libxslt}
-%{?with_mysql:BuildRequires:     mysql-devel}
-%{?with_ldap:BuildRequires:     openldap-devel}
-%{?with_procpsng:BuildRequires:     procps-ng}
-%{!?with_procng:BuildRequires:     procps}
-%{?with_quota:BuildRequires:     quota-devel}
-%{?with_dtrace:BuildRequires:     systemtap-sdt-devel}
-%{?with_tracker:BuildRequires:     tracker-devel}
-%{!?without_openafs:BuildRequires:     openafs-devel}
-%{!?without_tcp_wrappers:BuildRequires:     tcp_wrappers-devel}
-
-Requires:          dbus-python
-Requires:          perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-%{?with_tracker:Requires:          dconf}
-%{?ldconfig:Requires(post): %{ldconfig}}
-%{?ldconfig:Requires(postun): %{ldconfig}}
+Requires:     python3-dbus
+Requires:     dconf
 %{?systemd_requires}
+
+# Netatalk /usr/bin/dbd binary conflicts with binary of the same name in jday package
+Conflicts: jday
 
 %description
 Netatalk is a freely-available Open Source AFP file server. A *NIX/*BSD
@@ -113,81 +82,71 @@ developing applications that use %{name}.
 
 %prep
 %autosetup -p 1
-%{?with_libevent:rm -frv libevent/}
 
-# Avoid re-running the autotools
-touch -r aclocal.m4 configure configure.ac macros/gssapi-check.m4
+# The --disable-static flag does not work, so lets do it the hard way
+sed -i 's\both_libraries\shared_library\' libatalk/meson.build
 
-# fix permissions
-find include \( -name '*.h' -a -executable \) -exec chmod -x {} \;
-
-# Don't call systemctl daemon-reload during the build
-sed -i 's\-systemctl daemon-reload\\g' distrib/initscripts/Makefile.in
+# Don't build the japanese docs and put the english docs into a subfolder
+sed -i 's\install: true\install: false\' doc/ja/manual/meson.build
+sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
 
 %build
+%meson \
+        --localstatedir=%{_localstatedir}/lib                                  \
+        -Dwith-manual=true                                                     \
+        -Dwith-docbook-path=%{_datadir}/sgml/docbook/xsl-stylesheets-%{xslver} \
+        -Dwith-overwrite=true                                                  \
+        -Dwith-pgp-uam=true                                                    \
+        -Dwith-lockfile-path=%{_rundir}/lock/netatalk                          \
+        -Dwith-tcp-wrappers=false                                              \
+        -Dwith-tests=true                                                      \
+        -Dwith-dbus-sysconf-path=%{_sysconfdir}/dbus-1/system.d                \
+        -Dwith-pkgconfdir-path=%{_sysconfdir}/netatalk                         \
+        -Dwith-init-style=redhat-systemd                                       \
+        -Dwith-init-hooks=false                                                \
+        -Dwith-uams-path=%{_libdir}/netatalk                                   \
+        %{!?with_wolfssl:-Dwith-embedded-ssl=false}
 
-%configure \
-    --localstatedir=%{_localstatedir}/lib       \
-    --with-kerberos                             \
-    --with-libgcrypt                            \
-    --with-pam                                  \
-    --with-pkgconfdir=%{_sysconfdir}/netatalk/  \
-    --with-shadow                               \
-    --with-tbd=no                               \
-    --with-uams-path=%{_libdir}/netatalk        \
-    --enable-pgp-uam                            \
-    --enable-shared                             \
-    --enable-krbV-uam                           \
-    --enable-overwrite                          \
-    --with-init-style=redhat-systemd            \
-    --without-tdb                               \
-    --with-bdb                                  \
-    --with-lockfile=%{_rundir}/lock/netatalk/netatalk \
-    --disable-silent-rules                      \
-    --disable-static                            \
-    %{?with_acls:--with-acl}                    \
-    %{?with_cracklib:--with-cracklib}           \
-    %{?with_docbook:--with-docbook=%{_datadir}/sgml/docbook/xsl-stylesheets-%{xslver}} \
-    %{?with_tracker:--with-spotlight}           \
-    %{?with_tracker:--with-tracker-pkgconfig-version=%{pkgver}} \
-    %{?with_tracker:--with-dbus-daemon=%{_bindir}/dbus-daemon} \
-    %{?with_libevent:--without-libevent}        \
-    %{?with_libevent:--with-libevent-header=%{_includedir}} \
-    %{?with_libevent:--with-libevent-lib=%{_libdir}}
-
-%make_build
-# Build the local docs.
-%make_build -C doc/manual html-local
+%meson_build
 
 %install
-%make_install
+%meson_install
+
 # Use specific pam conf.
-install -pm644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/netatalk
+install -Dpm644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/netatalk
 
 # install our tmpfiles config
 install -Dpm644 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/netatalk.conf
 
-find %{buildroot} -name '*.la' -delete -print
-# Fix python shebang
-sed -i 's\^#!/usr/bin/env python$\#!%{python_bin}\' %{buildroot}/usr/bin/afpstats
+# No good way to stop static libraries from being built, so delete them after the fact
+find %{buildroot} -name '*.a' -delete -print
+
+# Bundled pam config gets installed into non-standard folder. 
+# Remove the bundled pam config and it parent folders as we supply our own pam config
+rm -rf %{buildroot}%{_prefix}%{_sysconfdir}
+
+# Other html files are installed directly into the doc folder, so we have to do this manually
+install -Dpm644 CONTRIBUTORS NEWS INSTALL.md README.md SECURITY.md %{buildroot}%_pkgdocdir/
+
+# make rpmlint happy
+ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 
 %check
-sh test/afpd/test.sh
+%meson_test
 
 %post
 %systemd_post %{name}.service
-%{?ldconfig}
+%tmpfiles_create %_tmpfilesdir/%{name}.conf
 
 %preun
 %systemd_preun %{name}.service
 
 %postun
 %systemd_postun_with_restart %{name}.service
-%{?ldconfig}
 
 %files
 %license COPYING COPYRIGHT
-%doc AUTHORS CONTRIBUTORS NEWS doc/manual/*.html
+%doc %{_pkgdocdir}/*
 %dir %{_sysconfdir}/netatalk
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/netatalk-dbus.conf
 %config(noreplace) %{_sysconfdir}/netatalk/afp.conf
@@ -204,15 +163,169 @@ sh test/afpd/test.sh
 %{_unitdir}/netatalk.service
 %{_tmpfilesdir}/netatalk.conf
 %{_localstatedir}/lib/netatalk
+%ghost %{_rundir}/lock/netatalk
 
 %files devel
 %{_bindir}/netatalk-config
-%{_datadir}/aclocal/netatalk.m4
 %{_includedir}/atalk/
 %{_libdir}/libatalk.so
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
+* Mon Jul 22 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.4-1
+- remove support for el7 and el8
+- replace autotools with meson
+- 3.2.4 release
+
+* Mon Jul 15 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.3-1
+- 3.2.3 release
+
+* Thu Jul 11 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.2-2
+- Exclude i686 builds per Fedora leaf package policy
+
+* Mon Jul 08 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.2-1
+- 3.2.2 release
+
+* Sun Jun 30 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.1-1
+- 3.2.1 release, fixes CVE-2024-38439, CVE-2024-38440, and CVE-2024-38441
+
+* Wed Jun 05 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.0-1
+- 3.2.0 release
+
+* Thu Jan 25 2024 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.18-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Sun Jan 21 2024 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.18-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Thu Oct 05 2023 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.18-1
+- 3.1.18 release
+- Fixes CVE-2022-22995
+
+* Thu Sep 28 2023 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.17-2
+- buildrequire mariadb-connector-c-devel for all but el7
+- minor changes to other specfile conditionals
+
+* Sun Sep 17 2023 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.17-1
+- 3.1.17 release
+- Fixes CVE-2023-42464
+- upstream removed bundled libevent back in 3.1.13 release
+
+* Tue Sep 12 2023 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.16-1
+- autoconf, automake, and libtool are no longer required
+- force gnu99 cflag on el7 builds
+- 3.1.16 release
+
+* Thu Jul 20 2023 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.15-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
+* Mon May 15 2023 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.15-1
+- 3.1.15 release
+
+* Sun Apr  9 2023 Florian Weimer <fweimer@redhat.com> - 5:3.1.14-4
+- C99 compatibility fixes
+
+* Mon Apr 03 2023 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.14-3
+- fix CVE-2022-45188
+
+* Thu Jan 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.14-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
+
+* Thu Jan 12 2023 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.14-1
+- 3.1.14 release
+
+* Fri Jul 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.13-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
+* Mon May 30 2022 Jitka Plesnikova <jplesnik@redhat.com> - 5:3.1.13-4
+- Perl 5.36 rebuild
+
+* Tue May 17 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.13-3
+- apply latest pr174 as possible fix for bz 2074586
+
+* Fri Apr 15 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.13-2
+- possible fix for bz 2074586
+
+* Tue Mar 22 2022 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.13-1
+- 3.1.13 release
+
+* Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-28
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Tue Sep 14 2021 Sahana Prasad <sahana@redhat.com> - 5:3.1.12-27
+- Rebuilt with OpenSSL 3.0.0
+
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-26
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Fri May 21 2021 Jitka Plesnikova <jplesnik@redhat.com> - 5:3.1.12-25
+- Perl 5.34 rebuild
+
+* Wed May 19 2021 Michal Josef Špaček <mspacek@redhat.com> - 5:3.1.12-24
+- Rewrite deprecated perl dependency (IO::Socket::INET6)
+
+* Sat Mar 13 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-23
+- build against tracker3 on fedora 
+
+* Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 5:3.1.12-22
+- Rebuilt for updated systemd-rpm-macros
+  See https://pagure.io/fesco/issue/2583.
+
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-21
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
+* Tue Sep 29 2020 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 5:3.1.12-20
+- Rebuilt for libevent 2.1.12
+
+* Fri Aug 21 2020 Jeff Law <law@redhat.com> - 5:3.1.12-19
+- Re-enable LTO
+
+* Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-18
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Tue Jun 30 2020 Jeff Law <law@redhat.com> - 5:3.1.12-17
+- Disable LTO
+
+* Fri Jun 26 2020 Jitka Plesnikova <jplesnik@redhat.com> - 5:3.1.12-16
+- Perl 5.32 re-rebuild of bootstrapped packages
+
+* Mon Jun 22 2020 Jitka Plesnikova <jplesnik@redhat.com> - 5:3.1.12-15
+- Perl 5.32 rebuild
+
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-14
+- remove pam_console dependency RHBZ 1822216
+- Exclude aarch64 and s390x on el8 https://pagure.io/epel/issue/87
+
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-13
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Wed Jan 22 2020 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-12
+- BZ1793912 fix multiple definition of invalid_dircache_entries
+
+* Tue Oct 22 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-11
+- conflicts with jday
+
+* Tue Oct 22 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-10
+- build against mariadb-devel, rather than mysql-devel
+- add with_python2 global
+- remove trailing slash from pkgconfdir
+
+* Mon Oct 21 2019 Miro Hrončok <mhroncok@redhat.com> - 5:3.1.12-9
+- Require Python 3 version of dbus-python on Fedora
+
+* Sun Oct 06 2019 Miro Hrončok <mhroncok@redhat.com> - 5:3.1.12-8
+- Switch back to Python 3 on Fedora
+
+* Sun Oct 06 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-7
+- Set the following global vars correctly for el8: 
+- without_tcp_wrappers, ldconfig, python_bin
+
+* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Thu May 30 2019 Jitka Plesnikova <jplesnik@redhat.com> - 5:3.1.12-5
+- Perl 5.30 rebuild
+
 * Sun Mar 10 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-4
 - use python2 binary for el7 compat, use python3 binary everywhere else
 
