@@ -17,7 +17,7 @@ Source1:           netatalk.pam-system-auth
 Source2:           netatalk.conf
 
 # https://github.com/Netatalk/netatalk/issues/1296
-Patch0:            netatalk-wolfssl.patch
+#Patch0:            netatalk-wolfssl.patch
 
 # Per i686 leaf package policy 
 # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
@@ -55,9 +55,12 @@ BuildRequires:     docbook-style-xsl
 BuildRequires:     libxslt
 BuildRequires:     dbus-devel
 BuildRequires:     dbus-glib-devel
-BuildRequires:     mariadb-connector-c-devel
+#BuildRequires:     mariadb-connector-c-devel
+#BuildRequires:     mysql-devel
 BuildRequires:     procps-ng
 BuildRequires:     procps
+BuildRequires:     libtalloc-devel
+%{?with_wolfssl:BuildRequires:     libretls-devel}
 %{!?with_wolfssl:BuildRequires:     openssl-devel}
 
 Requires:     python3-dbus
@@ -105,7 +108,8 @@ sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
         -Dwith-init-style=redhat-systemd                                       \
         -Dwith-init-hooks=false                                                \
         -Dwith-uams-path=%{_libdir}/netatalk                                   \
-        %{!?with_wolfssl:-Dwith-embedded-ssl=false}
+        %{!?with_wolfssl:-Dwith-embedded-ssl=false}                            \
+        %{?with_wolfssl:-Dwith-ssl-override=true}
 
 %meson_build
 
@@ -172,7 +176,7 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
-* Mon Jul 22 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.4-1
+* Sat Jul 27 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.4-1
 - remove support for el7 and el8
 - replace autotools with meson
 - 3.2.4 release
