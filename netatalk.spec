@@ -6,7 +6,7 @@
 
 Name:              netatalk
 Epoch:             5
-Version:           3.2.4
+Version:           3.2.5
 Release:           1%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
 License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT
@@ -16,55 +16,50 @@ Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}
 Source1:           netatalk.pam-system-auth
 Source2:           netatalk.conf
 
-# https://github.com/Netatalk/netatalk/issues/1296
-#Patch0:            netatalk-wolfssl.patch
-
 # Per i686 leaf package policy 
 # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
 ExcludeArch: %{ix86}
 
-BuildRequires:     meson
-BuildRequires:     make
-BuildRequires:     rpm
-BuildRequires:     grep
-BuildRequires:     perl-interpreter
-BuildRequires:     perl-generators
-BuildRequires:     sed
-BuildRequires:     coreutils
-BuildRequires:     findutils
-BuildRequires:     gcc
 BuildRequires:     avahi-devel
 BuildRequires:     bison
-BuildRequires:     flex
-BuildRequires:     libattr-devel
-BuildRequires:     libgcrypt-devel
-BuildRequires:     krb5-devel
-BuildRequires:     pam-devel
-BuildRequires:     systemd
-BuildRequires:     libtdb-devel
+BuildRequires:     coreutils
 BuildRequires:     cracklib-devel
-BuildRequires:     libacl-devel
-BuildRequires:     systemtap-sdt-devel
-BuildRequires:     openldap-devel
-BuildRequires:     quota-devel
-BuildRequires:     libdb-devel
-BuildRequires:     tracker3
-BuildRequires:     tracker3-devel
-BuildRequires:     libevent-devel
-BuildRequires:     docbook-style-xsl
-BuildRequires:     libxslt
+BuildRequires:     crypto-devel
 BuildRequires:     dbus-devel
 BuildRequires:     dbus-glib-devel
-#BuildRequires:     mariadb-connector-c-devel
-#BuildRequires:     mysql-devel
-BuildRequires:     procps-ng
-BuildRequires:     procps
+BuildRequires:     docbook-style-xsl
+BuildRequires:     findutils
+BuildRequires:     flex
+BuildRequires:     gcc
+BuildRequires:     grep
+BuildRequires:     krb5-devel
+BuildRequires:     libacl-devel
+BuildRequires:     libattr-devel
+BuildRequires:     libdb-devel
+BuildRequires:     libevent-devel
+BuildRequires:     libgcrypt-devel
+BuildRequires:     libretls-devel
 BuildRequires:     libtalloc-devel
-%{?with_wolfssl:BuildRequires:     libretls-devel}
-%{!?with_wolfssl:BuildRequires:     openssl-devel}
+BuildRequires:     libtdb-devel
+BuildRequires:     libxslt
+BuildRequires:     mariadb-connector-c-devel
+BuildRequires:     meson
+BuildRequires:     openldap-devel
+BuildRequires:     pam-devel
+BuildRequires:     perl-generators
+BuildRequires:     perl-interpreter
+BuildRequires:     procps
+BuildRequires:     procps-ng
+BuildRequires:     quota-devel
+BuildRequires:     rpm
+BuildRequires:     sed
+BuildRequires:     systemd
+BuildRequires:     systemtap-sdt-devel
+BuildRequires:     tracker3
+BuildRequires:     tracker3-devel
 
-Requires:     python3-dbus
 Requires:     dconf
+Requires:     python3-dbus
 %{?systemd_requires}
 
 # Netatalk /usr/bin/dbd binary conflicts with binary of the same name in jday package
@@ -86,8 +81,8 @@ developing applications that use %{name}.
 %prep
 %autosetup -p 1
 
-# The --disable-static flag does not work, so lets do it the hard way
-sed -i 's\both_libraries\shared_library\' libatalk/meson.build
+# Fix meson check for mariadb
+sed -i 's|\x27mariadb\x27|\x27libmariadb\x27|' meson.build
 
 # Don't build the japanese docs and put the english docs into a subfolder
 sed -i 's\install: true\install: false\' doc/ja/manual/meson.build
@@ -96,6 +91,7 @@ sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
 %build
 %meson \
         --localstatedir=%{_localstatedir}/lib                                  \
+        -Ddefault_library=shared                                               \
         -Dwith-manual=true                                                     \
         -Dwith-docbook-path=%{_datadir}/sgml/docbook/xsl-stylesheets-%{xslver} \
         -Dwith-overwrite=true                                                  \
@@ -121,9 +117,6 @@ install -Dpm644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/netatalk
 
 # install our tmpfiles config
 install -Dpm644 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/netatalk.conf
-
-# No good way to stop static libraries from being built, so delete them after the fact
-find %{buildroot} -name '*.a' -delete -print
 
 # Bundled pam config gets installed into non-standard folder. 
 # Remove the bundled pam config and it parent folders as we supply our own pam config
@@ -176,10 +169,10 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
-* Sat Jul 27 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.4-1
+* Mon Jul 29 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.5-1
 - remove support for el7 and el8
 - replace autotools with meson
-- 3.2.4 release
+- 3.2.5 release
 
 * Mon Jul 15 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.3-1
 - 3.2.3 release
