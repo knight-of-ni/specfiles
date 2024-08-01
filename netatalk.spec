@@ -24,7 +24,6 @@ BuildRequires:     avahi-devel
 BuildRequires:     bison
 BuildRequires:     coreutils
 BuildRequires:     cracklib-devel
-BuildRequires:     crypto-devel
 BuildRequires:     dbus-devel
 BuildRequires:     dbus-glib-devel
 BuildRequires:     docbook-style-xsl
@@ -45,6 +44,7 @@ BuildRequires:     libxslt
 BuildRequires:     mariadb-connector-c-devel
 BuildRequires:     meson
 BuildRequires:     openldap-devel
+BuildRequires:     openssl-devel
 BuildRequires:     pam-devel
 BuildRequires:     perl-generators
 BuildRequires:     perl-interpreter
