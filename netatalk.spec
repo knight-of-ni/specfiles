@@ -77,9 +77,6 @@ developing applications that use %{name}.
 %prep
 %autosetup -p 1
 
-# Fix meson check for mariadb
-sed -i 's|\x27mariadb\x27|\x27libmariadb\x27|' meson.build
-
 # Don't build the japanese docs and put the english docs into a subfolder
 sed -i 's\install: true\install: false\' doc/ja/manual/meson.build
 sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
