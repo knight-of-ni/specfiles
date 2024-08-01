@@ -1,9 +1,5 @@
 %global xslver $(rpm -q --queryformat "%%{VERSION}" docbook-style-xsl)
 
-# Netatalk bundles wolfssl with the project to maintain support for Apple DHCAST128
-# Discussion is here:  https://github.com/openssl/openssl/issues/22158
-%global with_wolfssl         1
-
 Name:              netatalk
 Epoch:             5
 Version:           3.2.5
@@ -104,8 +100,8 @@ sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
         -Dwith-init-style=redhat-systemd                                       \
         -Dwith-init-hooks=false                                                \
         -Dwith-uams-path=%{_libdir}/netatalk                                   \
-        %{!?with_wolfssl:-Dwith-embedded-ssl=false}                            \
-        %{?with_wolfssl:-Dwith-ssl-override=true}
+        -Dwith-embedded-ssl=false                                              \
+        -Dwith-ssl-override=false
 
 %meson_build
 
