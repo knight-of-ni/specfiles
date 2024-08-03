@@ -53,6 +53,7 @@ BuildRequires:     systemd
 BuildRequires:     systemtap-sdt-devel
 BuildRequires:     tracker3
 BuildRequires:     tracker3-devel
+BuildRequires:     wolfssl-devel
 
 Requires:     dconf
 Requires:     python3-dbus
@@ -115,8 +116,8 @@ install -Dpm644 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/netatalk.conf
 # Remove the bundled pam config and it parent folders as we supply our own pam config
 rm -rf %{buildroot}%{_prefix}%{_sysconfdir}
 
-# Other html files are installed directly into the doc folder, so we have to do this manually
-install -Dpm644 CONTRIBUTORS NEWS INSTALL.md README.md SECURITY.md %{buildroot}%_pkgdocdir/
+# make sure all static libraries are deleted
+find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 
 # make rpmlint happy
 ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
@@ -136,7 +137,8 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 
 %files
 %license COPYING COPYRIGHT
-%doc %{_pkgdocdir}/*
+%doc CONTRIBUTORS NEWS INSTALL.md README.md SECURITY.md
+%doc %{_pkgdocdir}/htmldoc
 %dir %{_sysconfdir}/netatalk
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/netatalk-dbus.conf
 %config(noreplace) %{_sysconfdir}/netatalk/afp.conf
@@ -162,7 +164,7 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 %{_mandir}/man*/netatalk-config.1*
 
 %changelog
-* Mon Jul 29 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.5-1
+* Fri Aug 02 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.5-1
 - remove support for el7 and el8
 - replace autotools with meson
 - 3.2.5 release
