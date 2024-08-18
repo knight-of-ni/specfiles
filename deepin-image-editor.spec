@@ -30,6 +30,22 @@ BuildRequires:  pkgconfig(libffmpegthumbnailer)
 BuildRequires:  libtiff-devel
 BuildRequires:  freeimage-devel
 
+# Required for tests
+BuildRequires:  pkgconfig(Qt5Test)
+BuildRequires:  pkgconfig(Qt5Sql)
+BuildRequires:  pkgconfig(Qt5X11Extras)
+BuildRequires:  pkgconfig(Qt5OpenGL)
+BuildRequires:  gio-qt-devel
+BuildRequires:  gsettings-qt-devel
+BuildRequires:  gstreamer1-devel
+BuildRequires:  gtest-devel
+BuildRequires:  gmock-devel
+BuildRequires:  libasan
+BuildRequires:  libubsan
+BuildRequires:  libXext-devel
+BuildRequires:  libexif-devel
+BuildRequires:  udisks2-qt5-devel
+
 %description
 %{summary}.
 
@@ -75,13 +91,23 @@ sed -i '/-O3/d' \
     libimageviewer/CMakeLists.txt \
     libimagevisualresult/CMakeLists.txt
 
+sed -i 's/CMAKE_CXX_STANDARD 11/CMAKE_CXX_STANDARD 14/' tests/CMakeLists.txt
+sed -i 's/std=c++11/std=c++14/' tests/CMakeLists.txt
+
 %build
-%cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo
+%cmake \
+       -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+       -DDOTEST=ON
+
 %cmake_build
 
 %install
 %cmake_install
 %find_lang libimageviewer --all-name --with-qt
+
+%check
+#%ctest
+test/test-prj-running.sh
 
 %files -n libimageviewer -f libimageviewer.lang
 %license LICENSE.txt
