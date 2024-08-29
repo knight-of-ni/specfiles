@@ -1,0 +1,73 @@
+From 847036e55604baff0bcb202ec5a6a5da99108cd7 Mon Sep 17 00:00:00 2001
+From: Andrew Bauer <zonexpertconsulting@outlook.com>
+Date: Fri, 23 Aug 2024 08:13:08 -0500
+Subject: [PATCH] include wolfssl/settings.h
+
+---
+ bin/afppasswd/afppasswd.c  | 1 +
+ etc/uams/uams_dhx_pam.c    | 1 +
+ etc/uams/uams_dhx_passwd.c | 1 +
+ etc/uams/uams_pgp.c        | 1 +
+ etc/uams/uams_randnum.c    | 1 +
+ 5 files changed, 5 insertions(+)
+
+diff --git a/bin/afppasswd/afppasswd.c b/bin/afppasswd/afppasswd.c
+index 47d591cb4b..a94350c411 100644
+--- a/bin/afppasswd/afppasswd.c
++++ b/bin/afppasswd/afppasswd.c
+@@ -42,6 +42,7 @@
+ #if defined(EMBEDDED_SSL) || defined(WOLFSSL_DHX)
+ #if defined(WOLFSSL_DHX)
+ #include <wolfssl/options.h>
++#include <wolfssl/wolfcrypt/settings.h>
+ #endif
+ #include <wolfssl/openssl/des.h>
+ #elif defined(OPENSSL_DHX)
+diff --git a/etc/uams/uams_dhx_pam.c b/etc/uams/uams_dhx_pam.c
+index 3fc19b74f6..e01b5c03fc 100644
+--- a/etc/uams/uams_dhx_pam.c
++++ b/etc/uams/uams_dhx_pam.c
+@@ -29,6 +29,7 @@
+ #if defined(EMBEDDED_SSL) || defined(WOLFSSL_DHX)
+ #if defined(WOLFSSL_DHX)
+ #include <wolfssl/options.h>
++#include <wolfssl/wolfcrypt/settings.h>
+ #endif
+ #include <openssl/cast.h>
+ #include <wolfssl/openssl/bn.h>
+diff --git a/etc/uams/uams_dhx_passwd.c b/etc/uams/uams_dhx_passwd.c
+index 70c709cfa3..2f639947b8 100644
+--- a/etc/uams/uams_dhx_passwd.c
++++ b/etc/uams/uams_dhx_passwd.c
+@@ -28,6 +28,7 @@
+ #if defined(EMBEDDED_SSL) || defined(WOLFSSL_DHX)
+ #if defined(WOLFSSL_DHX)
+ #include <wolfssl/options.h>
++#include <wolfssl/wolfcrypt/settings.h>
+ #endif
+ #include <openssl/cast.h>
+ #include <wolfssl/openssl/bn.h>
+diff --git a/etc/uams/uams_pgp.c b/etc/uams/uams_pgp.c
+index ff46c181f5..3a042dcca2 100644
+--- a/etc/uams/uams_pgp.c
++++ b/etc/uams/uams_pgp.c
+@@ -24,6 +24,7 @@
+ #if defined(EMBEDDED_SSL) || defined(WOLFSSL_DHX)
+ #if defined(WOLFSSL_DHX)
+ #include <wolfssl/options.h>
++#include <wolfssl/wolfcrypt/settings.h>
+ #endif
+ #include <openssl/cast.h>
+ #include <wolfssl/openssl/bn.h>
+diff --git a/etc/uams/uams_randnum.c b/etc/uams/uams_randnum.c
+index be141cffa9..c387edc0d3 100644
+--- a/etc/uams/uams_randnum.c
++++ b/etc/uams/uams_randnum.c
+@@ -28,6 +28,7 @@
+ #if defined(EMBEDDED_SSL) || defined(WOLFSSL_DHX)
+ #if defined(WOLFSSL_DHX)
+ #include <wolfssl/options.h>
++#include <wolfssl/wolfcrypt/settings.h>
+ #endif
+ #include <wolfssl/openssl/des.h>
+ #elif defined(OPENSSL_DHX)

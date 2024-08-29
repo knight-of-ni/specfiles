@@ -1,8 +1,12 @@
+%ifarch x86_64
+    %global with_aesni         1
+%endif
+
 Name:              wolfssl
-Version:           5.7.0
+Version:           5.7.2
 Release:           1%{?dist}
 Summary:           Lightweight SSL/TLS library written in ANSI C
-License:           GPLv2
+License:           GPL-2.0-or-later
 URL:               https://github.com/wolfSSL/wolfssl
 Source0:           %{url}/archive/v%{version}-stable.tar.gz#/%{name}-%{version}.tar.gz
 
@@ -42,7 +46,7 @@ visit the wolfCrypt FIPS FAQ or contact fips@wolfssl.com.
 
 %package devel
 Summary: Header files and development libraries for %{name}
-Requires: %{name} = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 This package contains the header files and development libraries
@@ -77,10 +81,11 @@ sed -i 's/^if BUILD_OCSP_STAPLING$/if FALSE/' scripts/include.am
 # Netatalk package needs wolfssl built with HAVE_DH_DEFAULT_PARAMS, OPENSSL_EXTRA, and OPENSSL_ALL options
 # https://github.com/Netatalk/netatalk/blob/main/meson.build#L566
 %configure \
-           --disable-static     \
-           --enable-all         \
-           --enable-all-crypto  \
-           --disable-qt
+           --disable-static              \
+           --enable-all                  \
+           --enable-all-crypto           \
+           --disable-qt                  \
+           %{?with_aesni:--enable-aesni}
 
 %make_build
 %make_build dox-html
@@ -108,24 +113,37 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 %files
 %license COPYING LICENSING
 %doc ChangeLog.md README README.md
-# pickup the documentation placed into pgkdocdir during install
-%doc %{_pkgdocdir}/*
-%exclude %{_pkgdocdir}/example
+# these files are placed into pkgdocdir during make install
+%doc %{_pkgdocdir}/QUIC.md
+%doc %{_pkgdocdir}/README.txt
+%doc %{_pkgdocdir}/taoCert.txt
+
 %{_libdir}/libwolfssl.so.42{,.*}
 
 %files devel
 %doc %{_pkgdocdir}/example
+%dir %{_includedir}/wolfssl
+%dir %{_includedir}/wolfssl/wolfcrypt
+%dir %{_includedir}/wolfssl/openssl
 %{_bindir}/wolfssl-config
+
 %{_includedir}/wolfssl/*.h
 %{_includedir}/wolfssl/wolfcrypt/*.h
 %{_includedir}/wolfssl/openssl/*.h
+
 %{_libdir}/pkgconfig/wolfssl.pc
 %{_libdir}/libwolfssl.so
 
 %files doc
+# offline html documentation only
 %license COPYING LICENSING
 %doc doc/html
 
 %changelog
-* Fri Aug 02 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.2-1
+* Sun Aug 25 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.2-1
+- 5.7.2 release
+- patch FIPS_VERSION3_GE macro issue
+
+* Fri Aug 09 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.0-1
 - Initial specfile
+

@@ -2,7 +2,7 @@
 
 Name:              netatalk
 Epoch:             5
-Version:           3.2.5
+Version:           3.2.7
 Release:           1%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
 License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT
@@ -11,6 +11,9 @@ URL:               http://netatalk.sourceforge.net
 Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.xz
 Source1:           netatalk.pam-system-auth
 Source2:           netatalk.conf
+
+Patch0:            netatalk-include-settings.patch
+Patch1:            netatalk-des-key-sz.patch
 
 # Per i686 leaf package policy 
 # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
@@ -78,6 +81,9 @@ developing applications that use %{name}.
 %prep
 %autosetup -p 1
 
+# remove bundled wolfssl
+rm -rf include/wolfssl
+
 # Don't build the japanese docs and put the english docs into a subfolder
 sed -i 's\install: true\install: false\' doc/ja/manual/meson.build
 sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
@@ -87,6 +93,7 @@ sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
         --localstatedir=%{_localstatedir}/lib                                  \
         -Ddefault_library=shared                                               \
         -Dwith-manual=true                                                     \
+        -Dwith-rpath=false                                                     \
         -Dwith-docbook-path=%{_datadir}/sgml/docbook/xsl-stylesheets-%{xslver} \
         -Dwith-overwrite=true                                                  \
         -Dwith-pgp-uam=true                                                    \
@@ -139,19 +146,42 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 %license COPYING COPYRIGHT
 %doc CONTRIBUTORS NEWS INSTALL.md README.md SECURITY.md
 %doc %{_pkgdocdir}/htmldoc
+
 %dir %{_sysconfdir}/netatalk
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/netatalk-dbus.conf
 %config(noreplace) %{_sysconfdir}/netatalk/afp.conf
 %config(noreplace) %{_sysconfdir}/netatalk/dbus-session.conf
 %config(noreplace) %{_sysconfdir}/netatalk/extmap.conf
 %config(noreplace) %{_sysconfdir}/pam.d/netatalk
-%{_bindir}/*
-%exclude %{_bindir}/netatalk-config
-%{_libdir}/netatalk/
-%{_libdir}/libatalk.so.*
-%{_mandir}/man*/*
-%exclude %{_mandir}/man*/netatalk-config*
-%{_sbindir}/*
+
+%{_sbindir}/afpd
+%{_sbindir}/cnid_dbd
+%{_sbindir}/cnid_metad
+%{_sbindir}/netatalk
+%{_bindir}/ad
+%{_bindir}/afpldaptest
+%{_bindir}/afppasswd
+%{_bindir}/afpstats
+%{_bindir}/apple_dump
+%{_bindir}/asip-status
+%{_bindir}/dbd
+%{_bindir}/macusers
+
+%dir %{_libdir}/netatalk
+%{_libdir}/netatalk/uams_*.so
+%{_libdir}/libatalk.so.18{,.*}
+
+%{_mandir}/man1/ad.1*
+%{_mandir}/man1/afpldaptest.1*
+%{_mandir}/man1/afppasswd.1*
+%{_mandir}/man1/afpstats.1*
+%{_mandir}/man1/apple_dump.1*
+%{_mandir}/man1/asip-status.1*
+%{_mandir}/man1/dbd.1*
+%{_mandir}/man1/macusers.1*
+%{_mandir}/man5/*
+%{_mandir}/man8/*
+
 %{_unitdir}/netatalk.service
 %{_tmpfilesdir}/netatalk.conf
 %{_localstatedir}/lib/netatalk
@@ -159,11 +189,16 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 
 %files devel
 %{_bindir}/netatalk-config
-%{_includedir}/atalk/
+%{_mandir}/man1/netatalk-config.1*
+%dir %{_includedir}/atalk
+%{_includedir}/atalk/*.h
 %{_libdir}/libatalk.so
-%{_mandir}/man*/netatalk-config.1*
 
 %changelog
+* Mon Aug 26 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.7-1
+- 3.2.7 release RHBZ#2304010
+- Build against wolfssl
+
 * Fri Aug 02 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.5-1
 - remove support for el7 and el8
 - replace autotools with meson
@@ -253,20 +288,20 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 * Fri May 21 2021 Jitka Plesnikova <jplesnik@redhat.com> - 5:3.1.12-25
 - Perl 5.34 rebuild
 
-* Wed May 19 2021 Michal Josef Špaček <mspacek@redhat.com> - 5:3.1.12-24
+* Wed May 19 2021 Michal Josef Å paÄek <mspacek@redhat.com> - 5:3.1.12-24
 - Rewrite deprecated perl dependency (IO::Socket::INET6)
 
 * Sat Mar 13 2021 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-23
 - build against tracker3 on fedora 
 
-* Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 5:3.1.12-22
+* Tue Mar 02 2021 Zbigniew JÄ™drzejewski-Szmek <zbyszek@in.waw.pl> - 5:3.1.12-22
 - Rebuilt for updated systemd-rpm-macros
   See https://pagure.io/fesco/issue/2583.
 
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.12-21
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
-* Tue Sep 29 2020 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 5:3.1.12-20
+* Tue Sep 29 2020 Zbigniew JÄ™drzejewski-Szmek <zbyszek@in.waw.pl> - 5:3.1.12-20
 - Rebuilt for libevent 2.1.12
 
 * Fri Aug 21 2020 Jeff Law <law@redhat.com> - 5:3.1.12-19
@@ -302,10 +337,10 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 - add with_python2 global
 - remove trailing slash from pkgconfdir
 
-* Mon Oct 21 2019 Miro Hrončok <mhroncok@redhat.com> - 5:3.1.12-9
+* Mon Oct 21 2019 Miro HronÄok <mhroncok@redhat.com> - 5:3.1.12-9
 - Require Python 3 version of dbus-python on Fedora
 
-* Sun Oct 06 2019 Miro Hrončok <mhroncok@redhat.com> - 5:3.1.12-8
+* Sun Oct 06 2019 Miro HronÄok <mhroncok@redhat.com> - 5:3.1.12-8
 - Switch back to Python 3 on Fedora
 
 * Sun Oct 06 2019 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.1.12-7
@@ -370,17 +405,17 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 5:3.1.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
-* Thu Jul 23 2015 Ralf Corsﾃｩpius <corsepiu@fedoraproject.org> - 5:3.1.7-1
+* Thu Jul 23 2015 Ralf Corsï¾ƒï½©pius <corsepiu@fedoraproject.org> - 5:3.1.7-1
 - Increment epoch. Missed to reset %%release in previous change.
 
-* Thu Jul 23 2015 Ralf Corsﾃｩpius <corsepiu@fedoraproject.org> - 4:3.1.7-7
+* Thu Jul 23 2015 Ralf Corsï¾ƒï½©pius <corsepiu@fedoraproject.org> - 4:3.1.7-7
 - Upstream update to 3.1.7 (RHBZ#1134783).
 - Remove doc from *-devel.
 - Add %%license.
 - Update %%description from
   http://www003.upp.so-net.ne.jp/hat/files/netatalk-3.1.7-0.1.fc22.src.rpm.
 
-* Thu Jul 23 2015 Ralf Corsﾃｩpius <corsepiu@fedoraproject.org> - 4:3.1.3-4
+* Thu Jul 23 2015 Ralf Corsï¾ƒï½©pius <corsepiu@fedoraproject.org> - 4:3.1.3-4
 - Address F23FTBFS, RHBZ#1239711:
   - Add netatalk-3.1.7-autotools.patch (Fix RHBZ#1160730). 
   - Remove ICDumpSuffixMap, netatalk-2.0.2-uams_no_pie.patch,
@@ -408,7 +443,7 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:2.2.3-11
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
-* Thu Apr 24 2014 Tomﾃ｡ﾅ｡ Mrﾃ｡z <tmraz@redhat.com> - 4:2.2.3-10
+* Thu Apr 24 2014 Tomï¾ƒï½¡ï¾…ï½¡ Mrï¾ƒï½¡z <tmraz@redhat.com> - 4:2.2.3-10
 - Rebuild for new libgcrypt
 
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:2.2.3-9
@@ -420,20 +455,20 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:2.2.3-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
-* Thu Aug 23 2012 Lukﾃ｡ﾅ｡ Nykrﾃｽn <lnykryn@redhat.com> - 4:2.2.3-6
+* Thu Aug 23 2012 Lukï¾ƒï½¡ï¾…ï½¡ Nykrï¾ƒï½½n <lnykryn@redhat.com> - 4:2.2.3-6
 - Scriptlets replaced with new systemd macros
 
-* Fri Jul 27 2012 Lukﾃ｡ﾅ｡ Nykrﾃｽn <lnykryn@redhat.com> - 4:2.2.3-5
+* Fri Jul 27 2012 Lukï¾ƒï½¡ï¾…ï½¡ Nykrï¾ƒï½½n <lnykryn@redhat.com> - 4:2.2.3-5
 - fixed build issue on f18
 
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:2.2.3-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
-* Mon Jul 16 2012 Lukﾃ｡ﾅ｡ Nykrﾃｽn <lnykryn@redhat.com> - 4:2.2.3-3
+* Mon Jul 16 2012 Lukï¾ƒï½¡ï¾…ï½¡ Nykrï¾ƒï½½n <lnykryn@redhat.com> - 4:2.2.3-3
 - fixes: #835714 - Netatalk 2.2.2-1: Unable to unmount afpd share from OSX
   client, crashes Finder netatalk-2.2.2-1
 
-* Tue Jun 12 2012 Lukﾃ｡ﾅ｡ Nykrﾃｽn <lnykryn@redhat.com> - 4:2.2.3-2
+* Tue Jun 12 2012 Lukï¾ƒï½¡ï¾…ï½¡ Nykrï¾ƒï½½n <lnykryn@redhat.com> - 4:2.2.3-2
 - fixes: #831001 - netatalk pam configuration has invalid entry
 
 * Mon Jun 04 2012 Lukas Nykryn <lnykryn@redhat.com> 4:2.2.3-1
@@ -877,3 +912,4 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 
 * Wed May 28 1997 Mark Cornick <mcornick@zorak.gsfc.nasa.gov>
 - Updated for /etc/pam.d
+

@@ -1,0 +1,40 @@
+From 7dccaa5520a03c4a0272ce5951e1dfb19ecee423 Mon Sep 17 00:00:00 2001
+From: Andrew Bauer <zonexpertconsulting@outlook.com>
+Date: Thu, 29 Aug 2024 16:46:53 -0500
+Subject: [PATCH] define DES_KEY_SZ if its not defined
+
+---
+ bin/afppasswd/afppasswd.c | 4 ++++
+ etc/uams/uams_randnum.c   | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/bin/afppasswd/afppasswd.c b/bin/afppasswd/afppasswd.c
+index 47d591cb4b..8715d83ee6 100644
+--- a/bin/afppasswd/afppasswd.c
++++ b/bin/afppasswd/afppasswd.c
+@@ -66,6 +66,10 @@
+ #define HEXPASSWDLEN 16
+ #define PASSWDLEN 8
+ 
++#ifndef DES_KEY_SZ
++#define DES_KEY_SZ (sizeof(DES_cblock))
++#endif
++
+ static char buf[MAXPATHLEN + 1];
+ 
+ /* if newpwd is null, convert buf from hex to binary. if newpwd isn't
+diff --git a/etc/uams/uams_randnum.c b/etc/uams/uams_randnum.c
+index be141cffa9..85b326b069 100644
+--- a/etc/uams/uams_randnum.c
++++ b/etc/uams/uams_randnum.c
+@@ -124,6 +124,10 @@ static  int home_passwd(const struct passwd *pwd,
+  *
+  * key file:
+  * key (in hex) */
++#ifndef DES_KEY_SZ
++#define DES_KEY_SZ (sizeof(DES_cblock))
++#endif
++
+ #define PASSWD_ILLEGAL '*'
+ #define unhex(x)  (isdigit(x) ? (x) - '0' : toupper(x) + 10 - 'A')
+ static int afppasswd(const struct passwd *pwd,
