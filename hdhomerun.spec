@@ -39,8 +39,6 @@ BuildRequires:  sed
 BuildRequires:  gtk2-devel
 BuildRequires:  libicns-utils
 BuildRequires:  desktop-file-utils
-
-Requires:       gtk2
 %endif
 
 %description
