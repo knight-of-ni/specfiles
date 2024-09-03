@@ -61,7 +61,7 @@ sed -i -e '/$(STRIP).*/d' -e 's/C\(PP\)\?FLAGS .=/C\1FLAGS ?=/' libhdhomerun/Mak
 
 # Convert files to utf8
 for f in libhdhomerun/*; do
-  /usr/bin/iconv -f iso-8859-1 -t utf-8 --output $f.new $f && mv $f.new $f
+  iconv -f iso-8859-1 -t utf-8 --output $f.new $f && mv $f.new $f
 done
 
 
@@ -91,8 +91,8 @@ popd
 %if %{with gui}
 %make_install -C %{make_subfolder}
 %else
-# SiliconDust puts the install logic for libhdhomerun
-# in the gui package, so we do it manually
+# SiliconDust puts the install target for libhdhomerun in
+# hdhomerun_config_gui, so we do it manually when not including the gui
 mkdir -p %{buildroot}%{_libdir}
 install -m0755 libhdhomerun/libhdhomerun.so %{buildroot}%{_libdir}/
 mkdir -p %{buildroot}%{_bindir}/
@@ -123,10 +123,6 @@ install -pm 0644 %{SOURCE3} %{buildroot}%{fw_services}/
 %files
 %license libhdhomerun/LICENSE
 %doc libhdhomerun/README.md README.firmware
-%if %{with gui}
-%license hdhomerun_config_gui/COPYING
-%doc hdhomerun_config_gui/AUTHORS hdhomerun_config_gui/README
-%endif
 
 # lib and cli are LGPLv3
 %{_libdir}/libhdhomerun.so
@@ -134,6 +130,9 @@ install -pm 0644 %{SOURCE3} %{buildroot}%{fw_services}/
 %{fw_services}/%{name}.xml
 
 %if %{with gui}
+%license hdhomerun_config_gui/COPYING
+%doc hdhomerun_config_gui/AUTHORS hdhomerun_config_gui/README
+
 # gui is GPLv3
 %{_bindir}/hdhomerun_config_gui
 %{_datadir}/applications/hdhomerun_config_gui.desktop
