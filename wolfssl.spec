@@ -4,7 +4,7 @@
 
 Name:              wolfssl
 Version:           5.7.2
-Release:           1%{?dist}
+Release:           2%{?dist}
 Summary:           Lightweight SSL/TLS library written in ANSI C
 License:           GPL-2.0-or-later
 URL:               https://github.com/wolfSSL/wolfssl
@@ -140,10 +140,13 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 %doc doc/html
 
 %changelog
+* Tue Sep 03 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.2-2
+- RHBZ#2308628 RHBZ#2308629 RHBZ#2308630 RHBZ#2308631 fixed in 5.7.2 release
+- fips macro patch no longer needed
+
 * Sun Aug 25 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.2-1
 - 5.7.2 release
 - patch FIPS_VERSION3_GE macro issue
 
 * Fri Aug 09 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.0-1
 - Initial specfile
-
