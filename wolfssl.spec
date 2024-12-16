@@ -3,12 +3,14 @@
 %endif
 
 Name:              wolfssl
-Version:           5.7.2
-Release:           2%{?dist}
+Version:           5.7.4
+Release:           1%{?dist}
 Summary:           Lightweight SSL/TLS library written in ANSI C
 License:           GPL-2.0-or-later
 URL:               https://github.com/wolfSSL/wolfssl
 Source0:           %{url}/archive/v%{version}-stable.tar.gz#/%{name}-%{version}.tar.gz
+
+Patch0:            0001-fedora-crypto-policies-initial-support.patch
 
 # Per i686 leaf package policy 
 # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
@@ -85,6 +87,7 @@ sed -i 's/^if BUILD_OCSP_STAPLING$/if FALSE/' scripts/include.am
            --enable-all                  \
            --enable-all-crypto           \
            --disable-qt                  \
+           --with-sys-crypto-policy      \
            %{?with_aesni:--enable-aesni}
 
 %make_build
@@ -140,6 +143,10 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 %doc doc/html
 
 %changelog
+* Mon Dec 16 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.4-1
+- 5.7.4 release
+- Apply patch to comply with system-wide crypto policies
+
 * Tue Sep 03 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.2-2
 - RHBZ#2308628 RHBZ#2308629 RHBZ#2308630 RHBZ#2308631 fixed in 5.7.2 release
 - fips macro patch no longer needed
