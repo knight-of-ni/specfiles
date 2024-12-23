@@ -1,6 +1,9 @@
 %ifarch x86_64
     %global with_aesni         1
 %endif
+%ifarch aarch64
+    %global with_sha3_crypto   1
+%endif
 
 Name:              wolfssl
 Version:           5.7.4
@@ -28,6 +31,11 @@ BuildRequires: sed
 BuildRequires: findutils
 # openssl executable needed for check
 BuildRequires: openssl
+
+# Testing
+BuildRequires: openssl-devel
+BuildRequires: crypto-policies
+
 
 %description
 The wolfSSL embedded SSL library (formerly CyaSSL) is a lightweight SSL/TLS
@@ -70,25 +78,29 @@ sed -i 's/command -v .*/true/g' doc/generate_documentation.sh
 sed -i 's/doxygen Doxyfile/doxygen -u Doxyfile \&\& doxygen Doxyfile/g' doc/generate_documentation.sh
 sed -i 's/Next...\\n/Next.../g' doc/check_api.sh
 
-# Disable tests that need Internets
+# Disable tests that need tcp
 sed -i 's/^if BUILD_OCSP$/if FALSE/' scripts/include.am
 sed -i 's/^if BUILD_OCSP_STAPLING$/if FALSE/' scripts/include.am
+sed -i 's/TEST_DECL(test_wolfSSL_BIO_datagram),//' tests/api.c
 
 %build
+# lto is causing build to fail on some distros but not others
+%if 0%{?fedora} < 41 || 0%{?rhel} == 10
+%define _lto_cflags %{nil}
+%endif
+
 ./autogen.sh
 
 # Wolfssl has a *lot* of build options. The options below represent an attempt at general compatiblity
-# Note we need to set --disable-qt flag, in order to enable HAVE_DH_DEFAULT_PARAMS (required for Netatalk)
-#
-# Netatalk package needs wolfssl built with HAVE_DH_DEFAULT_PARAMS, OPENSSL_EXTRA, and OPENSSL_ALL options
-# https://github.com/Netatalk/netatalk/blob/main/meson.build#L566
 %configure \
            --disable-static              \
            --enable-all                  \
+           --disable-earlydata           \
            --enable-all-crypto           \
            --disable-qt                  \
            --with-sys-crypto-policy      \
-           %{?with_aesni:--enable-aesni}
+           %{?with_aesni:--enable-aesni} \
+           %{?with_sha3_crypto:--enable-armasm=sha3-crypto}
 
 %make_build
 %make_build dox-html
@@ -157,3 +169,4 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 
 * Fri Aug 09 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5.7.0-1
 - Initial specfile
+
