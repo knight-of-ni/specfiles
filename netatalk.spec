@@ -1,19 +1,22 @@
-%global xslver $(rpm -q --queryformat "%%{VERSION}" docbook-style-xsl)
+%if 0%{?fedora} >= 42
+%global tracker localsearch
+%global trackerdevel tinysparql-devel
+%else
+%global tracker tracker3
+%global trackerdevel tracker3-devel
+%endif
 
 Name:              netatalk
 Epoch:             5
-Version:           3.2.7
+Version:           4.1.2
 Release:           1%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
-License:           GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT
+# Automatically converted from old format: GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT - review is highly recommended.
+License:           GPL-1.0-or-later AND GPL-2.0-only AND GPL-2.0-or-later AND LicenseRef-Callaway-LGPLv2+ AND LicenseRef-Callaway-BSD AND FSFUL AND LicenseRef-Callaway-MIT
 # Project is also mirrored at https://github.com/Netatalk/Netatalk
 URL:               http://netatalk.sourceforge.net
 Source0:           https://download.sourceforge.net/netatalk/netatalk-%{version}.tar.xz
 Source1:           netatalk.pam-system-auth
-Source2:           netatalk.conf
-
-Patch0:            netatalk-include-settings.patch
-Patch1:            netatalk-des-key-sz.patch
 
 # Per i686 leaf package policy 
 # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
@@ -39,6 +42,7 @@ BuildRequires:     libgcrypt-devel
 BuildRequires:     libretls-devel
 BuildRequires:     libtalloc-devel
 BuildRequires:     libtdb-devel
+BuildRequires:     libxcrypt-devel
 BuildRequires:     libxslt
 BuildRequires:     mariadb-connector-c-devel
 BuildRequires:     meson
@@ -54,9 +58,9 @@ BuildRequires:     rpm
 BuildRequires:     sed
 BuildRequires:     systemd
 BuildRequires:     systemtap-sdt-devel
-BuildRequires:     tracker3
-BuildRequires:     tracker3-devel
-BuildRequires:     wolfssl-devel
+BuildRequires:     %{tracker}
+BuildRequires:     %{trackerdevel}
+BuildRequires:     cups-devel
 
 Requires:     dconf
 Requires:     python3-dbus
@@ -70,6 +74,16 @@ Netatalk is a freely-available Open Source AFP file server. A *NIX/*BSD
 system running Netatalk is capable of serving many Macintosh clients
 simultaneously as an AppleShare file server (AFP).
 
+In addition to the AFP file server daemon, the following utility programs
+are also included:
+ * ad          - AppleDouble file utility suite
+ * afpldaptest - validate Netatalk LDAP parameters
+ * afppasswd   - RandNum UAM password management
+ * afpstats    - inquire AFP server usage stats
+ * asip-status - inquire AFP server capabilities
+ * dbd         - CNID database maintenance
+ * macusers    - list connected AFP server users
+
 %package        devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
@@ -78,35 +92,94 @@ Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 This package contains libraries and header files for
 developing applications that use %{name}.
 
+%package        afptest
+Summary:        Afp test suite for %{name}
+Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+
+%description    afptest
+Apple Filing Protocol service test tools.
+
+This package contains the following AFP functional test runners,
+benchmarks, and supporting tools:
+ * afp_lantest   - AFP benchmark akin to HELIOS LanTest
+ * afp_logintest - test authentication over DSI
+ * afp_spectest  - AFP specification functional test suite
+ * afp_speedtest - AFP read/write/copy benchmark
+ * afparg        - AFP CLI client
+
+%if 0%{?fedora}
+# The following subpackage needs the appletalk module, which is part of kernel-modules-extra
+# Unfortunately, the appletalk module is only available in Fedora
+%package        appletalk
+Summary:        Appletalk support for classic macintoshes
+Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       kernel-modules-extra
+
+%description    appletalk
+This package contains Netatalk's services and tools for networking
+with very old Macs and Apple IIs.
+
+This package contains the daemon and utility programs
+for the Netatalk AppleTalk network suite, which can be used
+with the Netatalk AFP file server, and other services.
+
+In addition to the atalkd network management daemon,
+the following utility programs are installed:
+ * aecho      - send AppleTalk Echo Protocol pings
+ * getzones   - list available AppleTalk zones
+ * nbplkup    - list registered AppleTalk entities
+ * nbprgstr   - register an AppleTalk entity
+ * nbpunrgstr - release a registered AppleTalk entity
+ * a2boot     - allows you to boot an Apple II over the network
+                from an AFP volume
+ * macipgw    - MacIP gateway which enables pre-TCP/IP Macs to browse the web
+                and use other TCP/IP resources
+ * papd       - allows Mac OS and Apple II clients to print to modern
+                AirPrint / CUPS enabled printers
+ * pap        - print from the host to a LocalTalk printer
+ * papstatus  - inquire the status of a LocalTalk printer
+ * timelord   - time server for Mac OS and Apple II
+%endif
+
+%package doc
+Summary:        HTML Documentation for %{name}
+BuildArch:      noarch
+
+%description doc
+Netatalk is a freely-available Open Source AFP file server. A *NIX/*BSD
+system running Netatalk is capable of serving many Macintosh clients
+simultaneously as an AppleShare file server (AFP).
+
+This package contains the HTML documentation for %{name}.
+
 %prep
 %autosetup -p 1
-
-# remove bundled wolfssl
-rm -rf include/wolfssl
 
 # Don't build the japanese docs and put the english docs into a subfolder
 sed -i 's\install: true\install: false\' doc/ja/manual/meson.build
 sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
 
+# Set RuntimeDirectory in the service file rather than use a tmpfiles.d config
+sed -E -i 's|^(ExecStart=.*)|\1\nRuntimeDirectory=lock/netatalk|' distrib/initscripts/systemd.netatalk.service.in
+
 %build
 %meson \
         --localstatedir=%{_localstatedir}/lib                                  \
         -Ddefault_library=shared                                               \
-        -Dwith-manual=true                                                     \
+        -Dwith-manual=local                                                    \
         -Dwith-rpath=false                                                     \
-        -Dwith-docbook-path=%{_datadir}/sgml/docbook/xsl-stylesheets-%{xslver} \
         -Dwith-overwrite=true                                                  \
-        -Dwith-pgp-uam=true                                                    \
-        -Dwith-lockfile-path=%{_rundir}/lock/netatalk                          \
+        -Dwith-lockfile-path=%{_rundir}/lock/netatalk/netatalk                 \
         -Dwith-tcp-wrappers=false                                              \
-        -Dwith-tests=true                                                      \
         -Dwith-dbus-sysconf-path=%{_sysconfdir}/dbus-1/system.d                \
         -Dwith-pkgconfdir-path=%{_sysconfdir}/netatalk                         \
-        -Dwith-init-style=redhat-systemd                                       \
+        -Dwith-init-style=systemd                                              \
         -Dwith-init-hooks=false                                                \
         -Dwith-uams-path=%{_libdir}/netatalk                                   \
-        -Dwith-embedded-ssl=false                                              \
-        -Dwith-ssl-override=false
+        -Dwith-cups=true                                                       \
+        -Dwith-tests=true                                                      \
+        -Dwith-testsuite=true                                                  \
+        %{?fedora:-Dwith-appletalk=true}                                       \
 
 %meson_build
 
@@ -116,9 +189,6 @@ sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
 # Use specific pam conf.
 install -Dpm644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/netatalk
 
-# install our tmpfiles config
-install -Dpm644 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/netatalk.conf
-
 # Bundled pam config gets installed into non-standard folder. 
 # Remove the bundled pam config and it parent folders as we supply our own pam config
 rm -rf %{buildroot}%{_prefix}%{_sysconfdir}
@@ -126,15 +196,11 @@ rm -rf %{buildroot}%{_prefix}%{_sysconfdir}
 # make sure all static libraries are deleted
 find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 
-# make rpmlint happy
-ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
-
 %check
 %meson_test
 
 %post
 %systemd_post %{name}.service
-%tmpfiles_create %_tmpfilesdir/%{name}.conf
 
 %preun
 %systemd_preun %{name}.service
@@ -142,10 +208,20 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 %postun
 %systemd_postun_with_restart %{name}.service
 
+%if 0%{?fedora}
+%post appletalk
+%systemd_post a2boot.service atalkd.service macipgw.service papd.service timelord.service
+
+%preun appletalk
+%systemd_preun a2boot.service atalkd.service macipgw.service papd.service timelord.service
+
+%postun appletalk
+%systemd_postun_with_restart a2boot.service atalkd.service macipgw.service papd.service timelord.service
+%endif
+
 %files
 %license COPYING COPYRIGHT
 %doc CONTRIBUTORS NEWS INSTALL.md README.md SECURITY.md
-%doc %{_pkgdocdir}/htmldoc
 
 %dir %{_sysconfdir}/netatalk
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/netatalk-dbus.conf
@@ -158,43 +234,174 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 %{_sbindir}/cnid_dbd
 %{_sbindir}/cnid_metad
 %{_sbindir}/netatalk
+
 %{_bindir}/ad
 %{_bindir}/afpldaptest
 %{_bindir}/afppasswd
 %{_bindir}/afpstats
-%{_bindir}/apple_dump
+%{_bindir}/addump
 %{_bindir}/asip-status
 %{_bindir}/dbd
 %{_bindir}/macusers
 
 %dir %{_libdir}/netatalk
 %{_libdir}/netatalk/uams_*.so
-%{_libdir}/libatalk.so.18{,.*}
+%{_libdir}/libatalk.so.19{,.*}
 
 %{_mandir}/man1/ad.1*
 %{_mandir}/man1/afpldaptest.1*
 %{_mandir}/man1/afppasswd.1*
 %{_mandir}/man1/afpstats.1*
-%{_mandir}/man1/apple_dump.1*
+%{_mandir}/man1/addump.1*
 %{_mandir}/man1/asip-status.1*
 %{_mandir}/man1/dbd.1*
 %{_mandir}/man1/macusers.1*
-%{_mandir}/man5/*
-%{_mandir}/man8/*
+
+%{_mandir}/man5/afp.conf.5*
+%{_mandir}/man5/afp_signature.conf.5*
+%{_mandir}/man5/afp_voluuid.conf.5*
+%{_mandir}/man5/extmap.conf.5*
+
+%{_mandir}/man8/afpd.8*
+%{_mandir}/man8/cnid_dbd.8*
+%{_mandir}/man8/cnid_metad.8*
+%{_mandir}/man8/netatalk.8*
 
 %{_unitdir}/netatalk.service
-%{_tmpfilesdir}/netatalk.conf
+
 %{_localstatedir}/lib/netatalk
-%ghost %{_rundir}/lock/netatalk
 
 %files devel
-%{_bindir}/netatalk-config
-%{_mandir}/man1/netatalk-config.1*
+%doc %{_pkgdocdir}/DEVELOPER
 %dir %{_includedir}/atalk
 %{_includedir}/atalk/*.h
 %{_libdir}/libatalk.so
 
+%if 0%{?fedora}
+%dir %{_includedir}/netatalk
+%{_includedir}/netatalk/*.h
+%endif
+
+%{_mandir}/man3/atalk_aton.3*
+%{_mandir}/man3/nbp_name.3*
+
+%{_mandir}/man4/atalk.4*
+
+%files afptest
+%license test/testsuite/COPYING
+%doc test/testsuite/README
+%{_bindir}/afp_lantest
+%{_bindir}/afp_logintest
+%{_bindir}/afp_spectest
+%{_bindir}/afp_speedtest
+%{_bindir}/afparg
+
+%dir %{_datarootdir}/netatalk
+%{_datarootdir}/netatalk/test-data/test431_data
+
+%{_mandir}/man1/afp_lantest.1*
+%{_mandir}/man1/afp_logintest.1*
+%{_mandir}/man1/afp_spectest.1*
+%{_mandir}/man1/afp_speedtest.1*
+%{_mandir}/man1/afptest.1*
+%{_mandir}/man1/afparg.1*
+
+%if 0%{?fedora}
+%files appletalk
+%doc %{_pkgdocdir}/README.AppleTalk
+%config(noreplace) %{_sysconfdir}/netatalk/atalkd.conf
+%config(noreplace) %{_sysconfdir}/netatalk/macipgw.conf
+%config(noreplace) %{_sysconfdir}/netatalk/papd.conf
+
+%{_sbindir}/a2boot
+%{_sbindir}/atalkd
+%{_sbindir}/macipgw
+%{_sbindir}/papd
+%{_sbindir}/timelord
+
+%{_bindir}/aecho
+%{_bindir}/getzones
+%{_bindir}/nbplkup
+%{_bindir}/nbprgstr
+%{_bindir}/nbpunrgstr
+%{_bindir}/pap
+%{_bindir}/papstatus
+
+%{_mandir}/man1/aecho.1*
+%{_mandir}/man1/getzones.1*
+%{_mandir}/man1/nbplkup.1*
+%{_mandir}/man1/nbp.1*
+%{_mandir}/man1/nbprgstr.1*
+%{_mandir}/man1/nbpunrgstr.1*
+%{_mandir}/man1/pap.1*
+
+%{_mandir}/man5/atalkd.conf.5*
+%{_mandir}/man5/macipgw.conf.5*
+%{_mandir}/man5/papd.conf.5*
+
+%{_mandir}/man8/a2boot.8*
+%{_mandir}/man8/atalkd.8*
+%{_mandir}/man8/macipgw.8*
+%{_mandir}/man8/papd.8*
+%{_mandir}/man8/papstatus.8*
+%{_mandir}/man8/timelord.8*
+
+%{_unitdir}/a2boot.service
+%{_unitdir}/atalkd.service
+%{_unitdir}/macipgw.service
+%{_unitdir}/papd.service
+%{_unitdir}/timelord.service
+%endif
+
+%files doc
+%license COPYING COPYRIGHT
+%doc %{_pkgdocdir}/htmldocs
+
 %changelog
+* Sun Mar 02 2025 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.1.2-1
+- 4.1.2 release
+- apple_dump renamed to addump
+- build against tinysparql for fedora >= 42
+
+* Sat Feb 01 2025 Björn Esser <besser82@fedoraproject.org> - 5:4.0.8-3
+- Add explicit BR: libxcrypt-devel
+
+* Fri Jan 17 2025 Fedora Release Engineering <releng@fedoraproject.org> - 5:4.0.8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_42_Mass_Rebuild
+
+* Mon Dec 30 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.0.8-1
+- 4.0.8 release
+- custom docbook xsl stylesheet path no longer needed
+
+* Fri Nov 15 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.0.6-1
+- 4.0.6 release
+- only build appletalk documentation for fedora
+
+* Tue Nov 12 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.0.5-2
+- improve descriptions of each subpackage
+- only build appletalk subpackage for fedora
+
+* Mon Nov 11 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.0.5-1
+- 4.0.5 release
+- new afptest, appletalk, and doc subpackages
+
+* Sun Sep 22 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.9-2
+- Revert license tag caused by incorrect rpmlint output
+
+* Sun Sep 15 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.9-1
+- 3.2.9 release
+- adjust License per rpmlint
+- use systemd RuntimeDirectory rather than tmpfiles.d config
+
+* Thu Sep 05 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.7-4
+- Add wolfssl build option with default off
+
+* Wed Sep 04 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.7-3
+- fix lockfile path
+
+* Mon Sep 02 2024 Miroslav Suchý <msuchy@redhat.com> - 5:3.2.7-2
+- convert license to SPDX
+
 * Mon Aug 26 2024 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:3.2.7-1
 - 3.2.7 release RHBZ#2304010
 - Build against wolfssl
@@ -912,4 +1119,3 @@ ln -sf ../README %{buildroot}/var/lib/netatalk/CNID/README
 
 * Wed May 28 1997 Mark Cornick <mcornick@zorak.gsfc.nasa.gov>
 - Updated for /etc/pam.d
-
