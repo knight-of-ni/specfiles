@@ -24,7 +24,6 @@ ExcludeArch: %{ix86}
 
 BuildRequires:     avahi-devel
 BuildRequires:     bison
-BuildRequires:     pandoc
 BuildRequires:     coreutils
 BuildRequires:     cracklib-devel
 BuildRequires:     dbus-devel
@@ -49,6 +48,7 @@ BuildRequires:     meson
 BuildRequires:     openldap-devel
 BuildRequires:     openssl-devel
 BuildRequires:     pam-devel
+BuildRequires:     pandoc
 BuildRequires:     perl-generators
 BuildRequires:     perl-interpreter
 BuildRequires:     procps
@@ -200,6 +200,7 @@ rm -rf %{buildroot}%{_pkgdocdir}/COMPILATION.txt
 rm -rf %{buildroot}%{_pkgdocdir}/DOCKER.txt
 
 %check
+%meson_test
 
 %post
 %systemd_post %{name}.service
