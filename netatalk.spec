@@ -8,7 +8,7 @@
 
 Name:              netatalk
 Epoch:             5
-Version:           4.1.2
+Version:           4.2.2
 Release:           1%{?dist}
 Summary:           Open Source Apple Filing Protocol(AFP) File Server
 # Automatically converted from old format: GPL+ and GPLv2 and GPLv2+ and LGPLv2+ and BSD and FSFUL and MIT - review is highly recommended.
@@ -24,15 +24,16 @@ ExcludeArch: %{ix86}
 
 BuildRequires:     avahi-devel
 BuildRequires:     bison
+BuildRequires:     pandoc
 BuildRequires:     coreutils
 BuildRequires:     cracklib-devel
 BuildRequires:     dbus-devel
 BuildRequires:     dbus-glib-devel
-BuildRequires:     docbook-style-xsl
 BuildRequires:     findutils
 BuildRequires:     flex
 BuildRequires:     gcc
 BuildRequires:     grep
+BuildRequires:     iniparser-devel
 BuildRequires:     krb5-devel
 BuildRequires:     libacl-devel
 BuildRequires:     libattr-devel
@@ -43,7 +44,6 @@ BuildRequires:     libretls-devel
 BuildRequires:     libtalloc-devel
 BuildRequires:     libtdb-devel
 BuildRequires:     libxcrypt-devel
-BuildRequires:     libxslt
 BuildRequires:     mariadb-connector-c-devel
 BuildRequires:     meson
 BuildRequires:     openldap-devel
@@ -106,6 +106,7 @@ benchmarks, and supporting tools:
  * afp_spectest  - AFP specification functional test suite
  * afp_speedtest - AFP read/write/copy benchmark
  * afparg        - AFP CLI client
+ * fce_listen    - listener for Netatalk's Filesystem Change Event protocol
 
 %if 0%{?fedora}
 # The following subpackage needs the appletalk module, which is part of kernel-modules-extra
@@ -155,9 +156,8 @@ This package contains the HTML documentation for %{name}.
 %prep
 %autosetup -p 1
 
-# Don't build the japanese docs and put the english docs into a subfolder
-sed -i 's\install: true\install: false\' doc/ja/manual/meson.build
-sed -i 's\doc/netatalk\doc/netatalk/htmldoc\' doc/manual/meson.build
+# Don't build the japanese docs
+sed -i 's\install: true\install: false\' doc/translated/ja/meson.build
 
 # Set RuntimeDirectory in the service file rather than use a tmpfiles.d config
 sed -E -i 's|^(ExecStart=.*)|\1\nRuntimeDirectory=lock/netatalk|' distrib/initscripts/systemd.netatalk.service.in
@@ -166,10 +166,9 @@ sed -E -i 's|^(ExecStart=.*)|\1\nRuntimeDirectory=lock/netatalk|' distrib/initsc
 %meson \
         --localstatedir=%{_localstatedir}/lib                                  \
         -Ddefault_library=shared                                               \
-        -Dwith-manual=local                                                    \
         -Dwith-rpath=false                                                     \
         -Dwith-overwrite=true                                                  \
-        -Dwith-lockfile-path=%{_rundir}/lock/netatalk/netatalk                 \
+        -Dwith-lockfile-path=%{_rundir}/lock/netatalk                          \
         -Dwith-tcp-wrappers=false                                              \
         -Dwith-dbus-sysconf-path=%{_sysconfdir}/dbus-1/system.d                \
         -Dwith-pkgconfdir-path=%{_sysconfdir}/netatalk                         \
@@ -196,8 +195,11 @@ rm -rf %{buildroot}%{_prefix}%{_sysconfdir}
 # make sure all static libraries are deleted
 find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 
+# Remove documentation files not relevant to rpm packaging
+rm -rf %{buildroot}%{_pkgdocdir}/COMPILATION.txt
+rm -rf %{buildroot}%{_pkgdocdir}/DOCKER.txt
+
 %check
-%meson_test
 
 %post
 %systemd_post %{name}.service
@@ -221,7 +223,7 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 
 %files
 %license COPYING COPYRIGHT
-%doc CONTRIBUTORS NEWS INSTALL.md README.md SECURITY.md
+%doc CONTRIBUTORS.txt NEWS.txt INSTALL.txt README.txt SECURITY.txt
 
 %dir %{_sysconfdir}/netatalk
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/netatalk-dbus.conf
@@ -272,7 +274,7 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 %{_localstatedir}/lib/netatalk
 
 %files devel
-%doc %{_pkgdocdir}/DEVELOPER
+%doc %{_pkgdocdir}/DEVELOPER.txt
 %dir %{_includedir}/atalk
 %{_includedir}/atalk/*.h
 %{_libdir}/libatalk.so
@@ -289,12 +291,12 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 
 %files afptest
 %license test/testsuite/COPYING
-%doc test/testsuite/README
 %{_bindir}/afp_lantest
 %{_bindir}/afp_logintest
 %{_bindir}/afp_spectest
 %{_bindir}/afp_speedtest
 %{_bindir}/afparg
+%{_bindir}/fce_listen
 
 %dir %{_datarootdir}/netatalk
 %{_datarootdir}/netatalk/test-data/test431_data
@@ -305,10 +307,11 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 %{_mandir}/man1/afp_speedtest.1*
 %{_mandir}/man1/afptest.1*
 %{_mandir}/man1/afparg.1*
+%{_mandir}/man1/fce_listen.1*
 
 %if 0%{?fedora}
 %files appletalk
-%doc %{_pkgdocdir}/README.AppleTalk
+%doc %{_pkgdocdir}/APPLETALK.txt
 %config(noreplace) %{_sysconfdir}/netatalk/atalkd.conf
 %config(noreplace) %{_sysconfdir}/netatalk/macipgw.conf
 %config(noreplace) %{_sysconfdir}/netatalk/papd.conf
@@ -358,6 +361,18 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 %doc %{_pkgdocdir}/htmldocs
 
 %changelog
+* Sun Apr 27 2025 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.2.2-1
+- 4.2.2 release
+- replace cmark with pandoc. Alows building of htmldocs.
+
+* Sat Apr 19 2025 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.2.1-1
+- 4.2.1 release
+- disable doc subpackage due to missing cmark-gfm dependency for htmldocs
+- update with-lockfile-path fixes RHBZ#2360947
+
+* Sun Mar 02 2025 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.1.2-2
+- Make macipgw.conf manpage conditional on have-appletalk flag
+
 * Sun Mar 02 2025 Andrew Bauer <zonexpertconsulting@outlook.com> - 5:4.1.2-1
 - 4.1.2 release
 - apple_dump renamed to addump
@@ -618,7 +633,7 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -type f -delete -print
 * Thu Jul 23 2015 Ralf Corsï¾ƒï½©pius <corsepiu@fedoraproject.org> - 4:3.1.7-7
 - Upstream update to 3.1.7 (RHBZ#1134783).
 - Remove doc from *-devel.
-- Add %%license.
+- Add %%licese.
 - Update %%description from
   http://www003.upp.so-net.ne.jp/hat/files/netatalk-3.1.7-0.1.fc22.src.rpm.
 
