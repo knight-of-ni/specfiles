@@ -7,12 +7,6 @@ License:        OML
 URL:            https://github.com/FastCGI-Archives/%{name}2
 Source0:        %{url}/archive/%{version}/%{name}2-%{version}.tar.gz
 
-#Patch1:         fcgi-2.4.0-autotools.patch
-#Patch2:         fcgi-2.4.0-gcc44_fixes.patch
-# CVE-2012-6687
-#Patch3:         fcgi-2.4.0-poll.patch
-#Patch4:         fcgi-configure-exit.patch
-
 BuildRequires:  autoconf
 BuildRequires:  automake
 BuildRequires:  coreutils
