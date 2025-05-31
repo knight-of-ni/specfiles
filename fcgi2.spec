@@ -17,6 +17,8 @@ BuildRequires:  libtool
 BuildRequires:  make
 BuildRequires:  sed
 
+# The new author calls the project fcgi2, even though the changes to the original code are merely maintenance and bug fixes
+# To avoid confusion, add a Provides here so it can be installed by the new name, fcgi2, as well as the old
 Provides:       %{name}2 = %{version}-%{release}
 
 %description
