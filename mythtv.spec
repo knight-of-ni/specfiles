@@ -461,7 +461,7 @@ Requires:  lame
 Requires:  perl(XML::Simple)
 Requires:  mythtv-common%{?_isa}       = %{version}-%{release}
 Requires:  mythtv-base-themes%{?_isa}  = %{version}-%{release}
-	
+
 # RHBZ 1838780 - mariadb lacks mysql provides on el8
 Requires:       (mysql%{?_isa} >= 5 or mariadb%{?_isa})
 
