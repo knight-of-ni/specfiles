@@ -701,7 +701,7 @@ Summary:   The music player add-on module for MythTV
 Requires:  mythtv-frontend-api%{?_isa} = %{mythfeapiver}
 
 %description -n mythmusic
-Music add-on for mythtv.
+The music player add-on module for MythTV.
 
 %endif
 ################################################################################
