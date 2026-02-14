@@ -1,9 +1,9 @@
 # The full MythTV Version string is computed from the output of git describe.
-%global vers_string v35.0-33-g931474b3a0
+%global vers_string v36.0-4-g45fce70352
 
 # The git date of last commit on mythtv repo
 # git_date=$(git log -1 --format=%cd --date=format:"%Y%m%d")
-%global git_date 20250810
+%global git_date 20260213
 
 # Specfile for building MythTV and MythPlugins RPMs from a git checkout.
 #
@@ -84,8 +84,8 @@
 # Basic descriptive tags for this package:
 #
 Name:           mythtv
-Version:        35.0
-Release:        8%{rel_string}%{?dist}
+Version:        36.0
+Release:        1%{rel_string}%{?dist}
 Summary:        A digital video recorder (DVR) application
 
 # The primary license is GPLv2+, but bits are borrowed from a number of
@@ -173,9 +173,8 @@ BuildRequires:  gcc-c++ lzo-devel
 BuildRequires:  git-core
 BuildRequires:  perl-generators
 BuildRequires:  desktop-file-utils
-BuildRequires:  qt5-qtbase-devel >= 5.2
-BuildRequires:  qt5-qtscript-devel >= 5.2
-BuildRequires:  qt5-qtwebkit-devel >= 5.2
+BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qtwebengine-devel
 BuildRequires:  freetype-devel >= 2
 BuildRequires:  mariadb-connector-c-devel
 BuildRequires:  libcec-devel >= 1.7
@@ -240,11 +239,9 @@ BuildRequires:  libass-devel
 BuildRequires:  kernel-headers
 
 # FireWire cable box support
-%if 0%{?fedora}
 BuildRequires:  libavc1394-devel
 BuildRequires:  libiec61883-devel
 BuildRequires:  libraw1394-devel
-%endif
 
 # Tuner support
 BuildRequires:  hdhomerun-devel
@@ -367,9 +364,7 @@ Requires:  mythplugins%{?_isa}        = %{version}-%{release}
 # Reminder this one is noarch - and not a sub-package (no EVR)
 Recommends:  mythweb
 Requires:  mythffmpeg%{?_isa}         = %{version}-%{release}
-#Requires:  mariadb
-#Requires:  mariadb-server
-%{?fedora:Recommends:  xmltv}
+Recommends:  xmltv
 
 # Generate the required mythtv-frontend-api version string here so we only
 # have to do it once.
@@ -415,7 +410,7 @@ Summary:   Library providing mythtv support
 
 %{?rhel:BuildRequires: epel-rpm-macros}
 Requires:  freetype%{?_isa} >= 2
-Requires:  qt5-qtbase-mysql%{?_isa}
+Requires:  qt6-qtbase-mysql%{?_isa}
 Requires:  libudisks2%{?_isa}
 
 # Handle package obsoletes here as this is the only "common" package.
@@ -439,9 +434,8 @@ Summary:   Development files for mythtv
 Requires:  mythtv-libs%{?_isa} = %{version}-%{release}
 
 BuildRequires:  mariadb-connector-c-devel
-Requires:  qt5-qtbase-devel%{?_isa} >= 5.2
-Requires:  qt5-qtscript-devel%{?_isa} >= 5.2
-Requires:  qt5-qtwebkit-devel%{?_isa} >= 5.2
+Requires:  qt6-qtbase-devel%{?_isa}
+BuildRequires:  qt6-qtwebengine-devel
 
 %description devel
 This package contains the header files and libraries for developing
@@ -463,9 +457,7 @@ This package contains the base themes for the mythtv user interface.
 %package frontend
 Summary:   Client component of mythtv (a DVR)
 Requires:  freetype%{?_isa}
-%if 0%{?fedora}
 Requires:  lame
-%endif
 Requires:  perl(XML::Simple)
 Requires:  mythtv-common%{?_isa}       = %{version}-%{release}
 Requires:  mythtv-base-themes%{?_isa}  = %{version}-%{release}
@@ -475,7 +467,7 @@ Requires:       (mysql%{?_isa} >= 5 or mariadb%{?_isa})
 
 Requires:  %{py_prefix}-MythTV       = %{version}-%{release}
 Recommends: libaacs%{?_isa}
-%{?fedora:Requires:  google-droid-sans-mono-fonts}
+Requires:  google-droid-sans-mono-fonts
 %{?fedora:Recommends:  mesa-vdpau-drivers%{?_isa}}
 Provides:  mythtv-frontend-api%{?_isa} = %{mythfeapiver}
 
@@ -499,9 +491,7 @@ reachable via the network.
 
 %package backend
 Summary:    Server component of mythtv (a DVR)
-%if 0%{?fedora}
 Requires:   lame
-%endif
 Requires:   mythtv-common%{?_isa} = %{version}-%{release}
 Requires:   mythtv-libs%{?_isa}   = %{version}-%{release}
 Requires:   mythtv-setup%{?_isa}
@@ -530,7 +520,7 @@ Requires:  mythtv-base-themes%{?_isa} = %{version}
 Requires:  google-droid-sans-fonts
 
 # Needed for svg channel icon support
-Requires: qt5-qtsvg
+Requires: qt6-qtsvg
 
 %description setup
 MythTV provides a unified graphical interface for recording and viewing
@@ -817,7 +807,7 @@ pushd mythtv
 # {_exec_prefix} etc... MythTV no longer accepts the parameters that the
 # configure macro passes, so we do this manually.
 ./configure \
-    --qmake=%{_bindir}/qmake-qt5                \
+    --qmake=%{_bindir}/qmake6                   \
     --prefix=%{_prefix}                         \
     --libdir=%{_libdir}                         \
     --libdir-name=%{_lib}                       \
@@ -1143,7 +1133,6 @@ install -pm 0644 %{SOURCE116} %{buildroot}%{fw_services}/
 %{_libdir}/libmythfreemheg-%{major_rel}.so.*
 %{_libdir}/libmythmetadata-%{major_rel}.so.*
 %{_libdir}/libmythprotoserver-%{major_rel}.so.*
-%{_libdir}/libmythservicecontracts-%{major_rel}.so.*
 %{_libdir}/libmythtv-%{major_rel}.so.*
 %{_libdir}/libmythui-%{major_rel}.so.*
 %{_libdir}/libmythupnp-%{major_rel}.so.*
@@ -1158,7 +1147,6 @@ install -pm 0644 %{SOURCE116} %{buildroot}%{fw_services}/
 %{_bindir}/mythffmpeg
 %{_bindir}/mythffprobe
 %{_libdir}/libmythav*.so.*
-%{_libdir}/libmythpostproc.so.*
 %{_libdir}/libmythswscale.so.*
 %{_libdir}/libmythswresample.so.*
 
@@ -1280,6 +1268,25 @@ install -pm 0644 %{SOURCE116} %{buildroot}%{fw_services}/
 ################################################################################
 
 %changelog
+* Sat Feb 14 2026 Andrew Bauer <zonexpertconsulting@outlook.com> - 36.0-1.4.20251203git45fce70352
+- update to latest fixes/36
+- build against qt6-base and qt6webengine
+- reenable mythbrowser for epel
+- these are available in epel now and have been reenabled: firewire support, xmltv, lame, google-droid-sans-mono-fonts
+
+* Mon Feb 02 2026 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 35.0-12.45.20251203git187b4cc6ca
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
+
+* Fri Dec 12 2025 Andrew Bauer <zonexpertconsulting@outlook.com> - 35.0-11.45.20251203git187b4cc6ca
+- update to latest fixes/35
+- qt5-webkit no longer available in latest epel. Disable Mythbrowser plugin.
+
+* Fri Dec 12 2025 Nicolas Chauvet <kwizart@gmail.com> - 35.0-10.33.20250810git931474b3a0
+- Rebuilt for libbluray
+
+* Wed Sep 10 2025 Andrew Bauer <zonexpertconsulting@outlook.com> - 35.0-9.33.20250810git931474b3a0
+- Add sysusers support. Fixes RFBZ#7312
+
 * Thu Sep 04 2025 Sérgio Basto <sergio@serjux.com> - 35.0-8.33.20250810git931474b3a0
 - Rebuild for x264
 
